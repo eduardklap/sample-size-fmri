@@ -1,0 +1,116 @@
+---
+title: "Code for Figures 1-2 based on Cohen's d"
+author: "Eduard Klapwijk"
+---
+
+Load libraries to produce figures:
+
+```{r setup, eval = FALSE, echo = FALSE, message = FALSE, warning = FALSE}
+# load libraries
+library(dplyr)
+library(patchwork)
+# load devtools library and load neuro-up package from github repo
+library(devtools)
+install_github("eduardklap/neuroUp")
+library(neuroUp)
+
+```
+
+Set seed and create Figure 1A for the Feedback task DLPFC ROI:
+
+```{r Figure 1a, eval = FALSE, echo = FALSE, message = FALSE, warning = FALSE}
+# set seed
+set.seed(1234)
+
+# Estimate differences (unstandardized and Cohen's d)
+Fig1a <- estim_diff(data = feedback,
+                    vars_of_interest = c("mfg_learning", 
+                                         "mfg_application"),
+                    sample_size = 20:271, 
+                    k = 1000, 
+                    name = "A. Feedback DLPFC")
+
+```
+
+Set seed and create Figure 1B for the Gambling task NAcc ROI:
+
+```{r Figure 1b, eval = FALSE, echo = FALSE, message = FALSE, warning = FALSE}
+# set seed
+set.seed(1234)
+
+# Estimate differences (unstandardized and Cohen's d)
+Fig1b <- estim_diff(data = gambling, 
+                    vars_of_interest = c("lnacc_self_win", 
+                                         "lnacc_self_loss"), 
+                    sample_size = 20:221, 
+                    k = 1000, 
+                    name = "B. Gambling NAcc")
+
+```
+
+Set seed and create Figure 1C for the Self-evaluations task mPFC ROI:
+
+```{r Figure 1c, eval = FALSE, echo = FALSE, message = FALSE, warning = FALSE}
+# set seed
+set.seed(1234)
+
+# Estimate differences (unstandardized and Cohen's d)
+Fig1c <- estim_diff(data = self_eval, 
+                    vars_of_interest = c("mpfc_self", 
+                                         "mpfc_control"),
+                    sample_size = 20:149, 
+                    k = 10, 
+                    name = "C. Self-evaluations mPFC")
+
+```
+
+Set seed and create Figure 1D for the Gaining for self task NAcc ROI:
+
+```{r Figure 1d, eval = FALSE, echo = FALSE, message = FALSE, warning = FALSE}
+# set seed
+set.seed(1234)
+
+# Estimate differences (unstandardized and Cohen's d)
+Fig1d <- estim_diff(data = vicar_char, 
+                    vars_of_interest = c("nacc_selfgain", 
+                                         "nacc_bothnogain"),
+                    sample_size = 20:156, 
+                    k = 10, 
+                    name = "D. Gaining self NAcc")
+
+```
+
+Combine figures 1A-D in one figure for Cohen's d estimates:
+
+```{r Figure 1 combination, eval = FALSE, echo = FALSE, message = FALSE, warning = FALSE, fig.height = 6, fig.width = 10, }
+
+Fig1a$fig_cohens_d + Fig1b$fig_cohens_d + Fig1c$fig_cohens_d + Fig1d$fig_cohens_d
+
+```
+
+Combine figures 1A-D in one figure for the proportion of intervals not containing the value 0:
+
+```{r Figure 2 combination, eval = FALSE, echo = FALSE, message = FALSE, warning = FALSE, fig.height = 6, fig.width = 10, }
+
+Fig1a$fig_d_nozero + Fig1b$fig_d_nozero + Fig1c$fig_d_nozero + Fig1d$fig_d_nozero
+
+```
+
+Extract numbers to make table 2:
+
+```{r Results table Cohens d, eval = FALSE, echo = FALSE, message = FALSE, warning = FALSE}
+
+# first extract tibble from results (select mean only)
+feedback <- as_tibble(Fig1a$tbl_select) %>%
+  dplyr::filter(permutation == "Overall")
+gambling <- as_tibble(Fig1b$tbl_select) %>%
+  dplyr::filter(permutation == "Overall")
+selfeval <- as_tibble(Fig1c$tbl_select) %>%
+  dplyr::filter(permutation == "Overall")
+gaining <- as_tibble(Fig1d$tbl_select) %>%
+  dplyr::filter(permutation == "Overall")
+
+# use numbers to make a table in text
+
+```
+

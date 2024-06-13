@@ -1,0 +1,15 @@
+{
+  "index.qmd": {
+    "index.html": "fad5c24f",
+    "index.tex": "f07bb5f7",
+    "index.docx": "7af6d48c"
+  },
+  "notebooks/figures-cohens_d.qmd": {
+    "figures-cohens_d-preview.html": "8faed73a",
+    "figures-cohens_d.embed.ipynb": "58ed5cc9",
+    "figures-cohens_d.out.ipynb": "42bf2dcd"
+  },
+  "notebooks/figures-correlations.qmd": {
+    "figures-correlations-preview.html": "616c1d76"
+  }
+}

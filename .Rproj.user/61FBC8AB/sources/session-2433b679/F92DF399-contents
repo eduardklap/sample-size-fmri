@@ -1,0 +1,64 @@
+---
+title: "Code for Figures 1-2 based on Cohen's d"
+author: "Eduard Klapwijk"
+---
+
+```{r setup, eval = FALSE, echo = FALSE, message = FALSE, warning = FALSE}
+# load libraries
+library(dplyr)
+library(patchwork)
+# load devtools library and load neuro-up package from github repo
+library(devtools)
+install_github("eduardklap/neuroUp")
+library(neuroUp)
+
+```
+
+```{r Figure 1a, eval = FALSE, echo = FALSE, message = FALSE, warning = FALSE}
+# set seed
+set.seed(1234)
+
+# Estimate differences (unstandardized and Cohen's d)
+Fig1a <- estim_diff(feedback, c("mfg_learning", "mfg_application"), 20:271, 10, "A. Feedback DLPFC")
+
+```
+
+```{r Figure 1b, eval = FALSE, echo = FALSE, message = FALSE, warning = FALSE}
+# set seed
+set.seed(1234)
+
+# Estimate differences (unstandardized and Cohen's d)
+Fig1b <- estim_diff(gambling, c("lnacc_self_win", "lnacc_self_loss"), 20:221, 10, "B. Gambling NAcc")
+
+```
+
+```{r Figure 1c, eval = FALSE, echo = FALSE, message = FALSE, warning = FALSE}
+# set seed
+set.seed(1234)
+
+# Estimate differences (unstandardized and Cohen's d)
+Fig1c <- estim_diff(self_eval, c("mpfc_self", "mpfc_control"), 20:149, 10, "C. Self-evaluations mPFC")
+
+```
+
+```{r Figure 1d, eval = FALSE, echo = FALSE, message = FALSE, warning = FALSE}
+# set seed
+set.seed(1234)
+
+# Estimate differences (unstandardized and Cohen's d)
+Fig1d <- estim_diff(vicar_char, c("nacc_selfgain", "nacc_bothnogain"), 20:156, 10, "D. Gaining self NAcc")
+
+```
+
+```{r Figure 1 combination, eval = FALSE, echo = FALSE, message = FALSE, warning = FALSE, fig.height = 6, fig.width = 10, }
+
+Fig1a$fig_cohens_d + Fig1b$fig_cohens_d + Fig1c$fig_cohens_d + Fig1d$fig_cohens_d
+
+```
+
+
+```{r Figure 2 combination, eval = FALSE, echo = FALSE, message = FALSE, warning = FALSE, fig.height = 6, fig.width = 10, }
+
+Fig1a$fig_d_nozero + Fig1b$fig_d_nozero + Fig1c$fig_d_nozero + Fig1d$fig_d_nozero
+
+```
