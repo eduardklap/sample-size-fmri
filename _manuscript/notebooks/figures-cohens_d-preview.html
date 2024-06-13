@@ -1,11 +1,16 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
-    <meta charset="utf-8">
-    <meta name="generator" content="quarto-1.4.553">
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  lang="en"
+  xml:lang="en"
+  >
+  <head>
+    <meta charset="utf-8" />
+    <meta name="generator" content="quarto-1.4.553" />
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
 
-    <meta name="author" content="Eduard Klapwijk">
+    <meta name="author" content="Eduard Klapwijk" />
 
     <title>Code for Figures 1-2 based on Cohen’s d</title>
     <style>
@@ -145,19 +150,8 @@
     });
     </script>
 
-    
-<script src="../site_libs/manuscript-notebook/headroom.min.js"></script>
-<script src="../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../site_libs/quarto-html/quarto.js"></script>
-<script src="../site_libs/quarto-html/popper.min.js"></script>
-<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
-     <script async="" src="https://hypothes.is/embed.js"></script>
+    <!-- htmldependencies:E3FAD763 -->
+     <script async src="https://hypothes.is/embed.js"></script>
 <script>
   window.document.addEventListener("DOMContentLoaded", function (_event) {
     document.body.classList.add('hypothesis-enabled');
@@ -165,17 +159,29 @@
 </script>  
       </head>
 
-  <body class="quarto-notebook">
+  <body>
     <div id="quarto-embed-header" class="headroom fixed-top bg-primary">
       
-      <a onclick="window.quartoBackToArticle(); return false;" class="btn btn-primary quarto-back-link" href=""><i class="bi bi-caret-left"></i> Back to Article</a>
+      <a onclick="window.quartoBackToArticle(); return false;" class="btn btn-primary quarto-back-link"><i class="bi bi-caret-left"></i> Back to Article</a>
       <h6><i class="bi bi-journal-code"></i> Code to create Figures 1 and 2</h6>
 
-            <a href="../notebooks/figures-cohens_d.qmd" class="btn btn-primary quarto-download-embed" download="figures-cohens_d.qmd">Download Source</a>
+            <a
+        href="figures-cohens_d.qmd"
+        class="btn btn-primary quarto-download-embed"
+        data-noresolveinput="true"
+        download="figures-cohens_d.qmd"
+        >Download Source</a
+      >
           </div>
 
-     <header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
+     <div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <div id="quarto-toc-target"></div>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+</div>
+<main class="content" id="quarto-document-content">      <header id="title-block-header" class="quarto-title-block default toc-left">
+  <div class="quarto-title-banner">
     <div class="quarto-title column-body">
       <h1 class="title">Code for Figures 1-2 based on Cohen’s d</h1>
           </div>
@@ -205,100 +211,94 @@
 
     <div class="quarto-other-links-text-target">
     </div>  </div>
-</header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
-<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
-  
-</div>
-<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-</div>
-<main class="content quarto-banner-title-block" id="quarto-document-content">      
+</header>
 
      <p>Load libraries to produce figures:</p>
-<div class="cell-container"><div class="cell-decorator"><pre>In [1]:</pre></div><div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load libraries</span></span>
+<div class="cell">
+<div class="sourceCode" id="cb1"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load libraries</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># load devtools library and load neuro-up package from github repo</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devtools)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">install_github</span>(<span class="st">"eduardklap/neuroUp"</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(neuroUp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div></div>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">install_github</span>(<span class="st">&quot;eduardklap/neuroUp&quot;</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(neuroUp)</span></code></pre></div>
+</div>
 <p>Set seed and create Figure 1A for the Feedback task DLPFC ROI:</p>
-<div class="cell-container"><div class="cell-decorator"><pre>In [2]:</pre></div><div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set seed</span></span>
+<div class="cell">
+<div class="sourceCode" id="cb2"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set seed</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate differences (unstandardized and Cohen's d)</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate differences (unstandardized and Cohen&#39;s d)</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>Fig1a <span class="ot">&lt;-</span> <span class="fu">estim_diff</span>(<span class="at">data =</span> feedback,</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">vars_of_interest =</span> <span class="fu">c</span>(<span class="st">"mfg_learning"</span>, </span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">"mfg_application"</span>),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">vars_of_interest =</span> <span class="fu">c</span>(<span class="st">&quot;mfg_learning&quot;</span>, </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">&quot;mfg_application&quot;</span>),</span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">sample_size =</span> <span class="dv">20</span><span class="sc">:</span><span class="dv">271</span>, </span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>                    <span class="at">k =</span> <span class="dv">1000</span>, </span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>                    <span class="at">name =</span> <span class="st">"A. Feedback DLPFC"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div></div>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>                    <span class="at">name =</span> <span class="st">&quot;A. Feedback DLPFC&quot;</span>)</span></code></pre></div>
+</div>
 <p>Set seed and create Figure 1B for the Gambling task NAcc ROI:</p>
-<div class="cell-container"><div class="cell-decorator"><pre>In [3]:</pre></div><div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set seed</span></span>
+<div class="cell">
+<div class="sourceCode" id="cb3"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set seed</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate differences (unstandardized and Cohen's d)</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate differences (unstandardized and Cohen&#39;s d)</span></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>Fig1b <span class="ot">&lt;-</span> <span class="fu">estim_diff</span>(<span class="at">data =</span> gambling, </span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">vars_of_interest =</span> <span class="fu">c</span>(<span class="st">"lnacc_self_win"</span>, </span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">"lnacc_self_loss"</span>), </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">vars_of_interest =</span> <span class="fu">c</span>(<span class="st">&quot;lnacc_self_win&quot;</span>, </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">&quot;lnacc_self_loss&quot;</span>), </span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">sample_size =</span> <span class="dv">20</span><span class="sc">:</span><span class="dv">221</span>, </span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>                    <span class="at">k =</span> <span class="dv">1000</span>, </span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>                    <span class="at">name =</span> <span class="st">"B. Gambling NAcc"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div></div>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>                    <span class="at">name =</span> <span class="st">&quot;B. Gambling NAcc&quot;</span>)</span></code></pre></div>
+</div>
 <p>Set seed and create Figure 1C for the Self-evaluations task mPFC ROI:</p>
-<div class="cell-container"><div class="cell-decorator"><pre>In [4]:</pre></div><div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set seed</span></span>
+<div class="cell">
+<div class="sourceCode" id="cb4"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set seed</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate differences (unstandardized and Cohen's d)</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate differences (unstandardized and Cohen&#39;s d)</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>Fig1c <span class="ot">&lt;-</span> <span class="fu">estim_diff</span>(<span class="at">data =</span> self_eval, </span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">vars_of_interest =</span> <span class="fu">c</span>(<span class="st">"mpfc_self"</span>, </span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">"mpfc_control"</span>),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">vars_of_interest =</span> <span class="fu">c</span>(<span class="st">&quot;mpfc_self&quot;</span>, </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">&quot;mpfc_control&quot;</span>),</span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">sample_size =</span> <span class="dv">20</span><span class="sc">:</span><span class="dv">149</span>, </span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>                    <span class="at">k =</span> <span class="dv">10</span>, </span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>                    <span class="at">name =</span> <span class="st">"C. Self-evaluations mPFC"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div></div>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>                    <span class="at">name =</span> <span class="st">&quot;C. Self-evaluations mPFC&quot;</span>)</span></code></pre></div>
+</div>
 <p>Set seed and create Figure 1D for the Gaining for self task NAcc ROI:</p>
-<div class="cell-container"><div class="cell-decorator"><pre>In [5]:</pre></div><div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set seed</span></span>
+<div class="cell">
+<div class="sourceCode" id="cb5"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set seed</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate differences (unstandardized and Cohen's d)</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate differences (unstandardized and Cohen&#39;s d)</span></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>Fig1d <span class="ot">&lt;-</span> <span class="fu">estim_diff</span>(<span class="at">data =</span> vicar_char, </span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">vars_of_interest =</span> <span class="fu">c</span>(<span class="st">"nacc_selfgain"</span>, </span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">"nacc_bothnogain"</span>),</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">vars_of_interest =</span> <span class="fu">c</span>(<span class="st">&quot;nacc_selfgain&quot;</span>, </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">&quot;nacc_bothnogain&quot;</span>),</span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">sample_size =</span> <span class="dv">20</span><span class="sc">:</span><span class="dv">156</span>, </span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>                    <span class="at">k =</span> <span class="dv">10</span>, </span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>                    <span class="at">name =</span> <span class="st">"D. Gaining self NAcc"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div></div>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>                    <span class="at">name =</span> <span class="st">&quot;D. Gaining self NAcc&quot;</span>)</span></code></pre></div>
+</div>
 <p>Combine figures 1A-D in one figure for Cohen’s d estimates:</p>
-<div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>Fig1a<span class="sc">$</span>fig_cohens_d <span class="sc">+</span> Fig1b<span class="sc">$</span>fig_cohens_d <span class="sc">+</span> Fig1c<span class="sc">$</span>fig_cohens_d <span class="sc">+</span> Fig1d<span class="sc">$</span>fig_cohens_d</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div></div>
+<div class="cell">
+<div class="sourceCode" id="cb6"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>Fig1a<span class="sc">$</span>fig_cohens_d <span class="sc">+</span> Fig1b<span class="sc">$</span>fig_cohens_d <span class="sc">+</span> Fig1c<span class="sc">$</span>fig_cohens_d <span class="sc">+</span> Fig1d<span class="sc">$</span>fig_cohens_d</span></code></pre></div>
+</div>
 <p>Combine figures 1A-D in one figure for the proportion of intervals not containing the value 0:</p>
-<div class="cell-container"><div class="cell-decorator"><pre>In [7]:</pre></div><div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>Fig1a<span class="sc">$</span>fig_d_nozero <span class="sc">+</span> Fig1b<span class="sc">$</span>fig_d_nozero <span class="sc">+</span> Fig1c<span class="sc">$</span>fig_d_nozero <span class="sc">+</span> Fig1d<span class="sc">$</span>fig_d_nozero</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div></div>
+<div class="cell">
+<div class="sourceCode" id="cb7"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>Fig1a<span class="sc">$</span>fig_d_nozero <span class="sc">+</span> Fig1b<span class="sc">$</span>fig_d_nozero <span class="sc">+</span> Fig1c<span class="sc">$</span>fig_d_nozero <span class="sc">+</span> Fig1d<span class="sc">$</span>fig_d_nozero</span></code></pre></div>
+</div>
 <p>Extract numbers to make table 2:</p>
-<div class="cell-container"><div class="cell-decorator"><pre>In [8]:</pre></div><div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># first extract tibble from results (select mean only)</span></span>
+<div class="cell">
+<div class="sourceCode" id="cb8"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># first extract tibble from results (select mean only)</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>feedback <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(Fig1a<span class="sc">$</span>tbl_select) <span class="sc">%&gt;%</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(permutation <span class="sc">==</span> <span class="st">"Overall"</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(permutation <span class="sc">==</span> <span class="st">&quot;Overall&quot;</span>)</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>gambling <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(Fig1b<span class="sc">$</span>tbl_select) <span class="sc">%&gt;%</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(permutation <span class="sc">==</span> <span class="st">"Overall"</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(permutation <span class="sc">==</span> <span class="st">&quot;Overall&quot;</span>)</span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>selfeval <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(Fig1c<span class="sc">$</span>tbl_select) <span class="sc">%&gt;%</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(permutation <span class="sc">==</span> <span class="st">"Overall"</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(permutation <span class="sc">==</span> <span class="st">&quot;Overall&quot;</span>)</span>
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>gaining <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(Fig1d<span class="sc">$</span>tbl_select) <span class="sc">%&gt;%</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(permutation <span class="sc">==</span> <span class="st">"Overall"</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(permutation <span class="sc">==</span> <span class="st">&quot;Overall&quot;</span>)</span>
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co"># use numbers to make a table in text</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div></div>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co"># use numbers to make a table in text</span></span></code></pre></div>
+</div>
      </main>
-<!-- /main column -->  <script id="quarto-html-after-body" type="application/javascript">
+<!-- /main column -->  <script id = "quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
     const mode = bsSheetEl.getAttribute("data-mode");
@@ -707,5 +707,5 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>  </div> <!-- /content --> 
-  
-</body></html>
+  </body>
+</html>

@@ -1,0 +1,122 @@
+<sub-article article-type="notebook" id="nb-4">
+<front-stub>
+<title-group>
+<article-title>Code for Figures 1-2 based on Cohen’s d</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<name>
+<surname>Klapwijk</surname>
+<given-names>Eduard</given-names>
+</name>
+<string-name>Eduard Klapwijk</string-name>
+
+</contrib>
+</contrib-group>
+</front-stub>
+
+<body>
+<p>Load libraries to produce figures:</p>
+<sec id="nb-code-cell-1" specific-use="notebook-code">
+<code language="r script"># load libraries
+library(dplyr)
+library(patchwork)
+# load devtools library and load neuro-up package from github repo
+library(devtools)
+install_github(&quot;eduardklap/neuroUp&quot;)
+library(neuroUp)
+</code>
+</sec>
+<p>Set seed and create Figure 1A for the Feedback task DLPFC ROI:</p>
+<sec id="nb-code-cell-2" specific-use="notebook-code">
+<code language="r script"># set seed
+set.seed(1234)
+
+# Estimate differences (unstandardized and Cohen's d)
+Fig1a &lt;- estim_diff(data = feedback,
+                    vars_of_interest = c(&quot;mfg_learning&quot;, 
+                                         &quot;mfg_application&quot;),
+                    sample_size = 20:271, 
+                    k = 1000, 
+                    name = &quot;A. Feedback DLPFC&quot;)
+</code>
+</sec>
+<p>Set seed and create Figure 1B for the Gambling task NAcc ROI:</p>
+<sec id="nb-code-cell-3" specific-use="notebook-code">
+<code language="r script"># set seed
+set.seed(1234)
+
+# Estimate differences (unstandardized and Cohen's d)
+Fig1b &lt;- estim_diff(data = gambling, 
+                    vars_of_interest = c(&quot;lnacc_self_win&quot;, 
+                                         &quot;lnacc_self_loss&quot;), 
+                    sample_size = 20:221, 
+                    k = 1000, 
+                    name = &quot;B. Gambling NAcc&quot;)
+</code>
+</sec>
+<p>Set seed and create Figure 1C for the Self-evaluations task mPFC
+ROI:</p>
+<sec id="nb-code-cell-4" specific-use="notebook-code">
+<code language="r script"># set seed
+set.seed(1234)
+
+# Estimate differences (unstandardized and Cohen's d)
+Fig1c &lt;- estim_diff(data = self_eval, 
+                    vars_of_interest = c(&quot;mpfc_self&quot;, 
+                                         &quot;mpfc_control&quot;),
+                    sample_size = 20:149, 
+                    k = 10, 
+                    name = &quot;C. Self-evaluations mPFC&quot;)
+</code>
+</sec>
+<p>Set seed and create Figure 1D for the Gaining for self task NAcc
+ROI:</p>
+<sec id="nb-code-cell-5" specific-use="notebook-code">
+<code language="r script"># set seed
+set.seed(1234)
+
+# Estimate differences (unstandardized and Cohen's d)
+Fig1d &lt;- estim_diff(data = vicar_char, 
+                    vars_of_interest = c(&quot;nacc_selfgain&quot;, 
+                                         &quot;nacc_bothnogain&quot;),
+                    sample_size = 20:156, 
+                    k = 10, 
+                    name = &quot;D. Gaining self NAcc&quot;)
+</code>
+</sec>
+<p>Combine figures 1A-D in one figure for Cohen’s d estimates:</p>
+<sec id="nb-code-cell-6" specific-use="notebook-code">
+<code language="r script">Fig1a$fig_cohens_d + Fig1b$fig_cohens_d + Fig1c$fig_cohens_d + Fig1d$fig_cohens_d
+</code>
+</sec>
+<p>Combine figures 1A-D in one figure for the proportion of intervals
+not containing the value 0:</p>
+<sec id="nb-code-cell-7" specific-use="notebook-code">
+<code language="r script">Fig1a$fig_d_nozero + Fig1b$fig_d_nozero + Fig1c$fig_d_nozero + Fig1d$fig_d_nozero
+</code>
+</sec>
+<p>Extract numbers to make table 2:</p>
+<sec id="nb-code-cell-8" specific-use="notebook-code">
+<code language="r script"># first extract tibble from results (select mean only)
+feedback &lt;- as_tibble(Fig1a$tbl_select) %&gt;%
+  dplyr::filter(permutation == &quot;Overall&quot;)
+gambling &lt;- as_tibble(Fig1b$tbl_select) %&gt;%
+  dplyr::filter(permutation == &quot;Overall&quot;)
+selfeval &lt;- as_tibble(Fig1c$tbl_select) %&gt;%
+  dplyr::filter(permutation == &quot;Overall&quot;)
+gaining &lt;- as_tibble(Fig1d$tbl_select) %&gt;%
+  dplyr::filter(permutation == &quot;Overall&quot;)
+
+# use numbers to make a table in text
+</code>
+</sec>
+</body>
+
+
+
+<back>
+</back>
+
+
+</sub-article>
