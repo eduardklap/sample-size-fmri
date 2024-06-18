@@ -2,7 +2,7 @@ project:
   type: manuscript
 
 manuscript:
-  article: index.qmd
+  article: sample-size-fmri-paper.qmd
   notebooks:
     - notebook: notebooks/figures-cohens_d.qmd
       title: Code to create Figures 1 and 2
