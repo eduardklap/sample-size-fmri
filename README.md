@@ -1,0 +1,2 @@
+# Reproducible manuscript for *Sample size estimation for task-related functional MRI studies using Bayesian updating*
+This repository contains the Quarto documents to produce a reproducible version of the manuscript.
