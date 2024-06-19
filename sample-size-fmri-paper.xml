@@ -3385,7 +3385,7 @@ updating with other task-related fMRI studies.</p>
       </fn>
     </fn-group>
   </back>
-  <sub-article article-type="notebook" id="nb-2-nb-1">
+  <sub-article article-type="notebook" id="nb-4-nb-1">
     <front-stub>
       <title-group>
         <article-title>Code for Figures 1-2 based on Cohen’s d</article-title>
@@ -3500,7 +3500,7 @@ gaining &lt;- as_tibble(Fig1d$tbl_select) %&gt;%
     <back>
 </back>
   </sub-article>
-  <sub-article article-type="notebook" id="nb-4-nb-2">
+  <sub-article article-type="notebook" id="nb-6-nb-2">
     <front-stub>
       <title-group>
         <article-title>Code for Figures 3-4 based on Pearson’s
