@@ -164,7 +164,7 @@ vicar_char_fig$fig_corr_nozero
 
 Plot Figure 3 (4 data sets combined):
 ```{r Figure 3}
-#| label: fig-3
+#| label: fig-3-total
 #| eval: TRUE
 #| echo: FALSE
 #| message: FALSE
@@ -178,7 +178,7 @@ feedback_fig$fig_corr + gambling_fig$fig_corr + selfeval_fig$fig_corr + vicar_ch
 
 Plot Figure 4 (4 data sets combined):
 ```{r Figure 4}
-#| label: fig-4
+#| label: fig-4-total
 #| eval: TRUE
 #| echo: FALSE
 #| message: FALSE

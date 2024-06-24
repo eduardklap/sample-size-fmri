@@ -154,7 +154,7 @@ vicar_char_fig$fig_d_nozero
 
 Plot Figure 1 (4 data sets combined):
 ```{r Figure 1}
-#| label: fig-1
+#| label: fig-1-total
 #| eval: TRUE
 #| echo: FALSE
 #| message: FALSE
@@ -168,7 +168,7 @@ feedback_fig$fig_cohens_d + gambling_fig$fig_cohens_d + selfeval_fig$fig_cohens_
 
 Plot Figure 2 (4 data sets combined):
 ```{r Figure 2}
-#| label: fig-2
+#| label: fig-2-total
 #| eval: TRUE
 #| echo: FALSE
 #| message: FALSE

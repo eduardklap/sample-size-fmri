@@ -4,9 +4,9 @@ project:
 manuscript:
   article: sample-size-fmri-paper.qmd
   notebooks:
-    - notebook: notebooks/figures-cohens_d.qmd
+    - notebook: figures-cohens_d.qmd
       title: Code to create Figures 1 and 2
-    - notebook: notebooks/figures-correlations.qmd
+    - notebook: figures-correlations.qmd
       title: Code to create Figures 3 and 4
 
 format:
@@ -20,6 +20,3 @@ format:
 
 execute:
   freeze: true
-
-
-
