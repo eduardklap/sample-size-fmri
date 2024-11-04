@@ -6,18 +6,19 @@ author: "Eduard Klapwijk"
 Load libraries to produce figures:
 ```{r setup}
 #| eval: TRUE
-#| echo: FALSE
+#| echo: TRUE
 #| message: FALSE
 #| error: FALSE
 #| warning: FALSE
-#| results: FALSE
-#| include: FALSE
+
 # load libraries
 library(dplyr)
 library(patchwork)
-# load devtools library and load neuro-up package from github repo
-library(devtools)
-install_github("eduardklap/neuroUp")
+library(ggplot2)
+library(ggpubr)
+# install neuroUp package from CRAN
+# install.packages("neuroUp")
+# load neuroUp
 library(neuroUp)
 ```
 
@@ -25,7 +26,7 @@ Set seed and create Figure 1a for the Feedback task DLPFC ROI:
 ```{r Figure 1a}
 #| label: fig-1a
 #| eval: TRUE
-#| echo: FALSE
+#| echo: TRUE
 #| message: FALSE
 #| warning: FALSE
 # set seed
@@ -39,15 +40,15 @@ feedback_fig <- estim_diff(data = feedback,
                            k = 1000, 
                            name = "A. Feedback DLPFC")
 
-# plot figure 1a
-feedback_fig$fig_cohens_d
+# plot figure 1a (and remove legend using ggplot2)
+feedback_fig$fig_cohens_d + theme(legend.position = "none")
 ```
 
 Plot Figure 2a for the Feedback task DLPFC ROI:
 ```{r Figure 2a}
 #| label: fig-2a
 #| eval: TRUE
-#| echo: FALSE
+#| echo: TRUE
 #| message: FALSE
 #| warning: FALSE
 # plot figure 2a
@@ -58,7 +59,7 @@ Set seed and create Figure 1b for the Gambling task NAcc ROI:
 ```{r Figure 1b}
 #| label: fig-1b
 #| eval: TRUE
-#| echo: FALSE
+#| echo: TRUE
 #| message: FALSE
 #| warning: FALSE
 # set seed
@@ -71,15 +72,15 @@ gambling_fig <- estim_diff(data = gambling,
                            sample_size = 20:221, 
                            k = 1000, 
                            name = "B. Gambling NAcc")
-# plot figure 1b
-gambling_fig$fig_cohens_d
+# plot figure 1b (and remove legend using ggplot2)
+gambling_fig$fig_cohens_d + theme(legend.position = "none")
 ```
 
 Plot Figure 2b for the  Gambling task NAcc ROI:
 ```{r Figure 2b}
 #| label: fig-2b
 #| eval: TRUE
-#| echo: FALSE
+#| echo: TRUE
 #| message: FALSE
 #| warning: FALSE
 # plot figure 2b
@@ -90,7 +91,7 @@ Set seed and create Figure 1c for the Self-evaluations task mPFC ROI:
 ```{r Figure 1c}
 #| label: fig-1c
 #| eval: TRUE
-#| echo: FALSE
+#| echo: TRUE
 #| message: FALSE
 #| warning: FALSE
 # set seed
@@ -104,15 +105,15 @@ selfeval_fig <- estim_diff(data = self_eval,
                            k = 1000, 
                            name = "C. Self-evaluations mPFC")
 
-# plot figure 1c
-selfeval_fig$fig_cohens_d
+# plot figure 1c (and remove legend using ggplot2)
+selfeval_fig$fig_cohens_d + theme(legend.position = "none")
 ```
 
 Plot Figure 2c for the Self-evaluations task mPFC ROI:
 ```{r Figure 2c}
 #| label: fig-2c
 #| eval: TRUE
-#| echo: FALSE
+#| echo: TRUE
 #| message: FALSE
 #| warning: FALSE
 # plot figure 2c
@@ -123,7 +124,7 @@ Set seed and create Figure 1d for the Gaining for self task NAcc ROI:
 ```{r Figure 1d}
 #| label: fig-1d
 #| eval: TRUE
-#| echo: FALSE
+#| echo: TRUE
 #| message: FALSE
 #| warning: FALSE
 # set seed
@@ -137,19 +138,65 @@ vicar_char_fig <- estim_diff(data = vicar_char,
                              k = 1000, 
                              name = "D. Gaining self NAcc")
 
-# plot figure 1d
-vicar_char_fig$fig_cohens_d
+# plot figure 1d (and remove legend using ggplot2)
+vicar_char_fig$fig_cohens_d + theme(legend.position = "none")
 ```
 
 Plot Figure 2d for the Gaining for self task NAcc ROI:
 ```{r Figure 2d}
 #| label: fig-2d
 #| eval: TRUE
-#| echo: FALSE
+#| echo: TRUE
 #| message: FALSE
 #| warning: FALSE
 # plot figure 2d
 vicar_char_fig$fig_d_nozero
+```
+
+Plot a mock figure with similar aesthetics to create an overall ggplot legend. 
+
+The only purpose of this code chunk is to make a simple overall legend to show that in light blue a subset of the individual permutations is shown and in purple the overall values. The original legends with permutation numbers will not be shown in the overall figure to create a cleaner look.
+The approach taken here was to use a simple mock ggplot figure and then use the `ggpubr` package to isolate the legend and display the legend together with the 4 actual plots.
+```{r Figure legend for paper}
+#| label: fig-legend
+#| eval: TRUE
+#| echo: TRUE
+#| message: FALSE
+#| warning: FALSE
+
+# make simple mock data to create overall legend
+legend_data <- tibble(legend = c("10 permutations","Overall"), N = 1:2, scores = c(1.6, 1.8),
+                      lower = c(.4, .6), upper = c(2.8, 3))
+# factorize legend and N
+legend_data$legend <- factor(legend_data$legend)
+legend_data$N <- as.factor(legend_data$N)
+
+# plot data to produce legend
+figure_legend <- ggplot2::ggplot(data = legend_data, 
+                               ggplot2::aes(x = .data$N, 
+                                            y = .data$scores,
+                                            colour = .data$legend,
+                                            size = .data$legend) ) +
+  ggplot2::theme_classic() +
+  ggplot2::geom_point(position = ggplot2::position_dodge(.8),
+                      ggplot2::aes(x = .data$N, 
+                                   y = .data$scores,
+                                   colour = .data$legend,
+                                   size = .data$legend)) +
+  ggplot2::scale_size_manual(values = c(2, 4))  +
+  ggplot2::geom_errorbar(ggplot2::aes(ymin = .data$lower, ymax = .data$upper),
+                         linewidth = .5, 
+                         position = ggplot2::position_dodge(.1)) +
+  ggplot2::scale_linetype_manual(values = c(1, 6)) +
+  ggplot2::scale_color_manual(values = c("#56B4E9","#CC79A7") ) +
+  theme(legend.title=element_blank())
+
+# use ggpubr get_legend to plot legend only
+leg <- ggpubr::get_legend(figure_legend)
+simple_legend <- ggpubr::as_ggplot(leg)
+
+# show the simple overall legend
+simple_legend
 ```
 
 Plot Figure 1 (4 data sets combined):
@@ -161,30 +208,39 @@ Plot Figure 1 (4 data sets combined):
 #| warning: FALSE
 #| fig-height: 6
 #| fig-width: 10
-#| fig-cap: "Estimates of task effects for five different sample sizes (starting with $N=20$, then 1/5th parts of the total dataset). For each sample size 10 randomly chosen HDCI’s out of the 1000 HDCI’s computed are displayed (in light blue, permutation numbers used are displayed to the right of each subfigure). The average estimate with credible interval summarizing the 1000 HDCI’s for each sample size are plotted in reddish purple. DLPFC = dorsolateral prefrontal cortex; mPFC = medial prefrontal cortex; NAcc = nucleus accumbens."
+#| fig-cap: "Estimates of task effects for five different sample sizes (starting with $N = 20$, then 1/5th parts of the total dataset). For each sample size 10 randomly chosen HDCI’s out of the 1000 HDCI’s computed are displayed (in light blue). The average estimate with credible interval summarizing the 1000 HDCI’s for each sample size are plotted in reddish purple. DLPFC = dorsolateral prefrontal cortex; mPFC = medial prefrontal cortex; NAcc = nucleus accumbens."
 # plot figure 1 using patchwork library
-feedback_fig$fig_cohens_d + gambling_fig$fig_cohens_d + selfeval_fig$fig_cohens_d + vicar_char_fig$fig_cohens_d
+feedback_fig$fig_cohens_d + theme(legend.position = "none") + 
+  gambling_fig$fig_cohens_d + theme(legend.position = "none") + 
+  selfeval_fig$fig_cohens_d + theme(legend.position = "none") + 
+  vicar_char_fig$fig_cohens_d + theme(legend.position = "none") +
+  inset_element(simple_legend, 
+                left = 1.7, bottom = 3.8, right = 0, top = 0, 
+                on_top = T, align_to = 'full')
 ```
 
 Plot Figure 2 (4 data sets combined):
 ```{r Figure 2}
-#| label: fig-2-total
+#| label: fig-2
 #| eval: TRUE
 #| echo: FALSE
 #| message: FALSE
 #| warning: FALSE
 #| fig-height: 6
 #| fig-width: 10
-#| fig-cap: "For each task, for five different sample sizes (starting with $n=20$, then 1/5th parts of the total dataset), the proportion of intervals not containing the value 0 is plotted in reddish purple."
+#| fig-cap: "For each task, for five different sample sizes (starting with $N = 20$, then 1/5th parts of the total dataset), the proportion of intervals not containing the value 0 is plotted in reddish purple."
 # plot figure 2 using patchwork library
-feedback_fig$fig_d_nozero + gambling_fig$fig_d_nozero + selfeval_fig$fig_d_nozero + vicar_char_fig$fig_d_nozero
+feedback_fig$fig_d_nozero + ylab(label = "Proportion not containing zero") +
+  gambling_fig$fig_d_nozero + ylab(label = "Proportion not containing zero") + 
+  selfeval_fig$fig_d_nozero + ylab(label = "Proportion not containing zero") +
+  vicar_char_fig$fig_d_nozero + ylab(label = "Proportion not containing zero") 
 ```
 
 Extract numbers to make table 2:
 ```{r Results table Cohens d}
 #| label: data-summary-cohens
 #| eval: TRUE
-#| echo: FALSE
+#| echo: TRUE
 #| message: FALSE
 #| warning: FALSE
 # first extract tibble from results (select mean only)
@@ -200,7 +256,7 @@ gaining_sum <- as_tibble(vicar_char_fig$tbl_select) %>%
 
 Use numbers to produce a table in text:
 
-| task             | brain region | n = 20                                                                                                                             | n = 2/5                                                                                                                                                             | n = 3/5                                                                                                                                                             | n = 4/5                                                                                                                                                             | N = total                                                                                                                                                           |
+| task             | brain region | $n = 20$                                                                                                                             | $n = 2/5$                                                                                                                                                             | $n = 3/5$                                                                                                                                                             | $n = 4/5$                                                                                                                                                             | $N = total$                                                                                                                                                           |
 |-----------|-----------|-----------|-----------|-----------|-----------|-----------|
 | Feedback         | DLPFC        | **`r round(feedback_sum[[1,"cohens_d"]], 2)`** (`r round(feedback_sum[[1,"d_lower"]], 2)`, `r round(feedback_sum[[1,"d_upper"]], 2)`) | **`r round(feedback_sum[[2,"cohens_d"]], 2)`** (`r round(feedback_sum[[2,"d_lower"]], 2)`, `r round(feedback_sum[[2,"d_upper"]], 2)`), *n* = `r feedback_sum[[2,"N"]]` | **`r round(feedback_sum[[3,"cohens_d"]], 2)`** (`r round(feedback_sum[[3,"d_lower"]], 2)`, `r round(feedback_sum[[3,"d_upper"]], 2)`), *n* = `r feedback_sum[[3,"N"]]` | **`r round(feedback_sum[[4,"cohens_d"]], 2)`** (`r round(feedback_sum[[4,"d_lower"]], 2)`, `r round(feedback_sum[[4,"d_upper"]], 2)`), *n* = `r feedback_sum[[4,"N"]]` | **`r round(feedback_sum[[5,"cohens_d"]], 2)`** (`r round(feedback_sum[[5,"d_lower"]], 2)`, `r round(feedback_sum[[5,"d_upper"]], 2)`), *N* = `r feedback_sum[[5,"N"]]` |
 | Gambling         | NAcc         | **`r round(gambling_sum[[1,"cohens_d"]], 2)`** (`r round(gambling_sum[[1,"d_lower"]], 2)`, `r round(gambling_sum[[1,"d_upper"]], 2)`) | **`r round(gambling_sum[[2,"cohens_d"]], 2)`** (`r round(gambling_sum[[2,"d_lower"]], 2)`, `r round(gambling_sum[[2,"d_upper"]], 2)`), *n* = `r gambling_sum[[2,"N"]]` | **`r round(gambling_sum[[3,"cohens_d"]], 2)`** (`r round(gambling_sum[[3,"d_lower"]], 2)`, `r round(gambling_sum[[3,"d_upper"]], 2)`), *n* = `r gambling_sum[[3,"N"]]` | **`r round(gambling_sum[[4,"cohens_d"]], 2)`** (`r round(gambling_sum[[4,"d_lower"]], 2)`, `r round(gambling_sum[[4,"d_upper"]], 2)`), *n* = `r gambling_sum[[4,"N"]]` | **`r round(gambling_sum[[5,"cohens_d"]], 2)`** (`r round(gambling_sum[[5,"d_lower"]], 2)`, `r round(gambling_sum[[5,"d_upper"]], 2)`), *N* = `r gambling_sum[[5,"N"]]` |

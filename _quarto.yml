@@ -2,12 +2,14 @@ project:
   type: manuscript
 
 manuscript:
-  article: sample-size-fmri-paper.qmd
-  notebooks:
-    - notebook: figures-cohens_d.qmd
-      title: Code to create Figures 1 and 2
-    - notebook: figures-correlations.qmd
-      title: Code to create Figures 3 and 4
+ article: sample-size-fmri-paper.qmd
+ notebooks:
+   - notebook: figures-cohens_d.qmd
+     title: Code to create Figures 1 and 2
+   - notebook: figures-correlations.qmd
+     title: Code to create Figures 3 and 4
+   - notebook: figures-box-cases.qmd
+     title: Code to create Figures Box 2
 
 format:
   html:

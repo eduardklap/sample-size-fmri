@@ -1,0 +1,76 @@
+---
+title: "Code for use cases box 2"
+author: "Eduard Klapwijk"
+---
+Load libraries to produce figures:
+```{r setup}
+#| eval: TRUE
+#| echo: TRUE
+#| message: FALSE
+#| error: FALSE
+#| warning: FALSE
+# load libraries
+library(dplyr)
+library(patchwork)
+library(readr)
+library(neuroUp)
+```
+
+Read data from file and select complete cases: 
+```{r data box 2}
+#| eval: TRUE
+#| echo: FALSE
+#| message: FALSE
+#| warning: FALSE
+
+# read data & select complete cases only (ignore NA)
+data_luna <- read_csv("data/luna_reward-learn_dev_BOLD.csv")
+data_luna <- data_luna[complete.cases(data_luna), ]
+
+```
+
+Set seed and create figure with Cohens' d for the box:
+
+```{r figure box Cohens d}
+#| label: fig1-box
+#| eval: TRUE
+#| echo: FALSE
+#| message: FALSE
+#| warning: FALSE
+#| fig-height: 3
+#| fig-width: 9 
+# set seed
+set.seed(1234)
+
+# Estimate Cohen's d
+luna_cohen_fig <- estim_diff(data = data_luna,
+                           vars_of_interest = c("beta", "null"),
+                           sample_size = 20:232, 
+                           k = 100, 
+                           name = "Reward learning caudate")
+# plot figure 1 Box 2
+luna_cohen_fig$fig_cohens_d | luna_cohen_fig$fig_d_nozero 
+```
+
+Set seed and create figure with correlations for the box:
+
+```{r figure box correlations}
+#| label: fig2-box
+#| eval: TRUE
+#| echo: FALSE
+#| message: FALSE
+#| warning: FALSE
+#| fig-height: 3
+#| fig-width: 10 
+# set seed
+set.seed(1234)
+
+# Estimate correlations between posrpe (parametric association between BOLD and reward prediction error) and age
+luna_corr_fig <- estim_corr(data = data_luna,
+                           vars_of_interest = c("posrpe", "age"),
+                           sample_size = 20:232, 
+                           k = 100, 
+                           name = "Reward learning caudate corr. with age")
+# plot figure 2 Box 2
+luna_corr_fig$fig_corr | luna_corr_fig$fig_corr_nozero
+```

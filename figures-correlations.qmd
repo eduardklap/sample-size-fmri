@@ -5,18 +5,16 @@ author: "Eduard Klapwijk"
 Load libraries to produce figures:
 ```{r setup}
 #| eval: TRUE
-#| echo: FALSE
+#| echo: TRUE
 #| message: FALSE
 #| error: FALSE
 #| warning: FALSE
-#| results: FALSE
-#| include: FALSE
+
 # load libraries
 library(dplyr)
 library(patchwork)
-# load devtools library and load neuro-up package from github repo
-library(devtools)
-install_github("eduardklap/neuroUp")
+library(ggplot2)
+library(ggpubr)
 library(neuroUp)
 ```
 
@@ -24,7 +22,7 @@ Set seed and create Figure 3a for the Feedback task DLPFC ROI:
 ```{r Figure 3a}
 #| label: fig-3a
 #| eval: TRUE
-#| echo: FALSE
+#| echo: TRUE
 #| message: FALSE
 #| warning: FALSE
 # set seed
@@ -48,7 +46,7 @@ Plot Figure 4a for the Feedback task DLPFC ROI:
 ```{r Figure 4a}
 #| label: fig-4a
 #| eval: TRUE
-#| echo: FALSE
+#| echo: TRUE
 #| message: FALSE
 #| warning: FALSE
 # plot figure 4a
@@ -59,7 +57,7 @@ Set seed and create Figure 3b for the Gambling task NAcc ROI:
 ```{r Figure 3b}
 #| label: fig-3b
 #| eval: TRUE
-#| echo: FALSE
+#| echo: TRUE
 #| message: FALSE
 #| warning: FALSE
 # set seed
@@ -81,7 +79,7 @@ Plot Figure 4b for the Gambling task NAcc ROI:
 ```{r Figure 4b}
 #| label: fig-4b
 #| eval: TRUE
-#| echo: FALSE
+#| echo: TRUE
 #| message: FALSE
 #| warning: FALSE
 # plot figure 4b
@@ -92,7 +90,7 @@ Set seed and create Figure 3c for the Self-evaluations task mPFC ROI:
 ```{r Figure 3c}
 #| label: fig-3c
 #| eval: TRUE
-#| echo: FALSE
+#| echo: TRUE
 #| message: FALSE
 #| warning: FALSE
 # set seed
@@ -118,7 +116,7 @@ Plot Figure 4c for the Self-evaluations task mPFC ROI:
 ```{r Figure 4c}
 #| label: fig-4c
 #| eval: TRUE
-#| echo: FALSE
+#| echo: TRUE
 #| message: FALSE
 #| warning: FALSE
 # plot figure 4c
@@ -129,7 +127,7 @@ Set seed and create Figure 3D for the Gaining for self task NAcc ROI:
 ```{r Figure 3d}
 #| label: fig-3d
 #| eval: TRUE
-#| echo: FALSE
+#| echo: TRUE
 #| message: FALSE
 #| warning: FALSE
 # set seed
@@ -155,11 +153,57 @@ Plot Figure 4d for the Gaining for self task NAcc ROI:
 ```{r Figure 4d}
 #| label: fig-4d
 #| eval: TRUE
-#| echo: FALSE
+#| echo: TRUE
 #| message: FALSE
 #| warning: FALSE
 # plot figure 4d
 vicar_char_fig$fig_corr_nozero
+```
+
+Plot a mock figure with similar aesthetics to create an overall ggplot legend. 
+
+The only purpose of this code chunk is to make a simple overall legend to show that in light blue a subset of the individual permutations is shown and in purple the overall values. The original legends with permutation numbers will not be shown in the overall figure to create a cleaner look.
+The approach taken here was to use a simple mock ggplot figure and then use the `ggpubr` package to isolate the legend and display the legend together with the 4 actual plots.
+```{r Figure legend for paper}
+#| label: fig-legend
+#| eval: TRUE
+#| echo: TRUE
+#| message: FALSE
+#| warning: FALSE
+
+# make simple mock data to create overall legend
+legend_data <- tibble(legend = c("10 permutations","Overall"), N = 1:2, scores = c(1.6, 1.8),
+                      lower = c(.4, .6), upper = c(2.8, 3))
+# factorize legend and N
+legend_data$legend <- factor(legend_data$legend)
+legend_data$N <- as.factor(legend_data$N)
+
+# plot data to produce legend
+figure_legend <- ggplot2::ggplot(data = legend_data, 
+                               ggplot2::aes(x = .data$N, 
+                                            y = .data$scores,
+                                            colour = .data$legend,
+                                            size = .data$legend) ) +
+  ggplot2::theme_classic() +
+  ggplot2::geom_point(position = ggplot2::position_dodge(.8),
+                      ggplot2::aes(x = .data$N, 
+                                   y = .data$scores,
+                                   colour = .data$legend,
+                                   size = .data$legend)) +
+  ggplot2::scale_size_manual(values = c(2, 4))  +
+  ggplot2::geom_errorbar(ggplot2::aes(ymin = .data$lower, ymax = .data$upper),
+                         linewidth = .5, 
+                         position = ggplot2::position_dodge(.1)) +
+  ggplot2::scale_linetype_manual(values = c(1, 6)) +
+  ggplot2::scale_color_manual(values = c("#009E73", "#E69F00") ) +
+  theme(legend.title=element_blank())
+
+# use ggpubr get_legend to plot legend only
+leg <- ggpubr::get_legend(figure_legend)
+simple_legend <- ggpubr::as_ggplot(leg)
+
+# show the simple overall legend
+simple_legend
 ```
 
 Plot Figure 3 (4 data sets combined):
@@ -171,9 +215,15 @@ Plot Figure 3 (4 data sets combined):
 #| warning: FALSE
 #| fig-height: 6
 #| fig-width: 10
-#| fig-cap: "Estimates of Pearson’s correlation between age and the task effect for five different sample sizes (starting with $N=20$, then 1/5th parts of the total dataset). For each sample size 10 randomly chosen HDCI’s out of the 1000 HDCI’s computed are displayed (in green, permutation numbers used are displayed to the right of each subfigure). The average estimate with credible interval summarizing the 1000 HDCI’s for each sample size are plotted in orange. DLPFC = dorsolateral prefrontal cortex; mPFC = medial prefrontal cortex; NAcc = nucleus accumbens. Age is modeled as linearly increasing or decreasing."
+#| fig-cap: "Estimates of Pearson’s correlation between age and the task effect for five different sample sizes (starting with $N = 20$, then 1/5th parts of the total dataset). For each sample size 10 randomly chosen HDCI’s out of the 1000 HDCI’s computed are displayed (in green, permutation numbers used are displayed to the right of each subfigure). The average estimate with credible interval summarizing the 1000 HDCI’s for each sample size are plotted in orange. DLPFC = dorsolateral prefrontal cortex; mPFC = medial prefrontal cortex; NAcc = nucleus accumbens. Age is modeled as linearly increasing or decreasing."
 # plot figure 3 using patchwork library
-feedback_fig$fig_corr + gambling_fig$fig_corr + selfeval_fig$fig_corr + vicar_char_fig$fig_corr
+feedback_fig$fig_corr + theme(legend.position = "none") +
+  gambling_fig$fig_corr + theme(legend.position = "none") + 
+  selfeval_fig$fig_corr + theme(legend.position = "none") +
+  vicar_char_fig$fig_corr + theme(legend.position = "none") +
+  inset_element(simple_legend, 
+                left = 1.7, bottom = 3.8, right = 0, top = 0, 
+                on_top = T, align_to = 'full')
 ```
 
 Plot Figure 4 (4 data sets combined):
@@ -185,7 +235,7 @@ Plot Figure 4 (4 data sets combined):
 #| warning: FALSE
 #| fig-height: 6
 #| fig-width: 10
-#| fig-cap: "For each task, for five different sample sizes (starting with $N=20$, then 1/5th parts of the total dataset), the proportion of intervals not containing the value 0 is plotted in orange. Age is modeled as linearly increasing or decreasing."
+#| fig-cap: "For each task, for five different sample sizes (starting with $N = 20$, then 1/5th parts of the total dataset), the proportion of intervals not containing the value 0 is plotted in orange. Age is modeled as linearly increasing or decreasing."
 # plot figure 4 using patchwork library
 feedback_fig$fig_corr_nozero + gambling_fig$fig_corr_nozero + selfeval_fig$fig_corr_nozero + vicar_char_fig$fig_corr_nozero
 ```
@@ -194,7 +244,7 @@ Extract numbers to produce table 3:
 ```{r Results table correlations}
 #| label: data-summary-corr
 #| eval: TRUE
-#| echo: FALSE
+#| echo: TRUE
 #| message: FALSE
 #| warning: FALSE
 # first extract tibble from results (select mean only)
@@ -210,7 +260,7 @@ gaining_sum <- as_tibble(vicar_char_fig$tbl_select) %>%
 
 Use numbers to produce a table in text:
 
-| task             | brain region | n = 20                                                                                                                    | n = 2/5                                                                                                                                                | n = 3/5                                                                                                                                                | n = 4/5                                                                                                                                                | N = total                                                                                                                                              |
+| task             | brain region | $n = 20$                                                                                                                    | $n = 2/5$                                                                                                                                                | $n = 3/5$                                                                                                                                                | $n = 4/5$                                                                                                                                                | $N = total$                                                                                                                                              |
 |-----------|-----------|-----------|-----------|-----------|-----------|-----------|
 | Feedback         | DLPFC        | **`r round(feedback_sum[[1,"correlation"]], 2)`** (`r round(feedback_sum[[1,"lower"]], 2)`, `r round(feedback_sum[[1,"upper"]], 2)`) | **`r round(feedback_sum[[2,"correlation"]], 2)`** (`r round(feedback_sum[[2,"lower"]], 2)`, `r round(feedback_sum[[2,"upper"]], 2)`), *n =* `r feedback_sum[[2,"N"]]` | **`r round(feedback_sum[[3,"correlation"]], 2)`** (`r round(feedback_sum[[3,"lower"]], 2)`, `r round(feedback_sum[[3,"upper"]], 2)`), *n =* `r feedback_sum[[3,"N"]]` | **`r round(feedback_sum[[4,"correlation"]], 2)`** (`r round(feedback_sum[[4,"lower"]], 2)`, `r round(feedback_sum[[4,"upper"]], 2)`), *n =* `r feedback_sum[[4,"N"]]` | **`r round(feedback_sum[[5,"correlation"]], 2)`** (`r round(feedback_sum[[5,"lower"]], 2)`, `r round(feedback_sum[[5,"upper"]], 2)`), *N* = `r feedback_sum[[5,"N"]]` |
 | Gambling         | NAcc         | **`r round(gambling_sum[[1,"correlation"]], 2)`** (`r round(gambling_sum[[1,"lower"]], 2)`, `r round(gambling_sum[[1,"upper"]], 2)`) | **`r round(gambling_sum[[2,"correlation"]], 2)`** (`r round(gambling_sum[[2,"lower"]], 2)`, `r round(gambling_sum[[2,"upper"]], 2)`), *n =* `r gambling_sum[[2,"N"]]` | **`r round(gambling_sum[[3,"correlation"]], 2)`** (`r round(gambling_sum[[3,"lower"]], 2)`, `r round(gambling_sum[[3,"upper"]], 2)`), *n =* `r gambling_sum[[3,"N"]]` | **`r round(gambling_sum[[4,"correlation"]], 2)`** (`r round(gambling_sum[[4,"lower"]], 2)`, `r round(gambling_sum[[4,"upper"]], 2)`), *n =* `r gambling_sum[[4,"N"]]` | **`r round(gambling_sum[[5,"correlation"]], 2)`** (`r round(gambling_sum[[5,"lower"]], 2)`, `r round(gambling_sum[[5,"upper"]], 2)`), *N =* `r gambling_sum[[5,"N"]]` |
