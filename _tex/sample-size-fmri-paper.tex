@@ -43,15 +43,69 @@
 \setlength{\emergencystretch}{3em} % prevent overfull lines
 \setcounter{secnumdepth}{5}
 % Make \paragraph and \subparagraph free-standing
+\makeatletter
 \ifx\paragraph\undefined\else
   \let\oldparagraph\paragraph
-  \renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+  \renewcommand{\paragraph}{
+    \@ifstar
+      \xxxParagraphStar
+      \xxxParagraphNoStar
+  }
+  \newcommand{\xxxParagraphStar}[1]{\oldparagraph*{#1}\mbox{}}
+  \newcommand{\xxxParagraphNoStar}[1]{\oldparagraph{#1}\mbox{}}
 \fi
 \ifx\subparagraph\undefined\else
   \let\oldsubparagraph\subparagraph
-  \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+  \renewcommand{\subparagraph}{
+    \@ifstar
+      \xxxSubParagraphStar
+      \xxxSubParagraphNoStar
+  }
+  \newcommand{\xxxSubParagraphStar}[1]{\oldsubparagraph*{#1}\mbox{}}
+  \newcommand{\xxxSubParagraphNoStar}[1]{\oldsubparagraph{#1}\mbox{}}
 \fi
+\makeatother
 
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{241,243,245}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.40,0.45,0.13}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\ExtensionTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.28,0.35,0.67}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.46,0.62}{#1}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.07,0.07,0.07}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
 
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}\usepackage{longtable,booktabs,array}
@@ -66,15 +120,17 @@
 \makesavenoteenv{longtable}
 \usepackage{graphicx}
 \makeatletter
-\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
-\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
-\makeatother
-% Scale images if necessary, so that they will not overflow the page
-% margins by default, and it is still possible to overwrite the defaults
-% using explicit options in \includegraphics[width, height, ...]{}
-\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
 % Set default figure placement to htbp
-\makeatletter
 \def\fps@figure{htbp}
 \makeatother
 % definitions for citeproc citations
@@ -153,9 +209,7 @@
 \@ifpackageloaded{caption}{}{\usepackage{caption}}
 \@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
 \makeatother
-\ifLuaTeX
-  \usepackage{selnolig}  % disable illegal ligatures
-\fi
+
 \usepackage{bookmark}
 
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
@@ -172,11 +226,12 @@ package, sample sizes, Bayesian updating},
   urlcolor={Blue},
   pdfcreator={LaTeX via pandoc}}
 
+
 \title{Sample size estimation for task-related functional MRI studies
 using Bayesian updating}
 \author{Eduard T. Klapwijk \and Joran Jongerling \and Herbert
 Hoijtink \and Eveline A. Crone}
-\date{2024-06-24}
+\date{2024-11-04}
 
 \begin{document}
 \maketitle
@@ -202,17 +257,18 @@ to allow researchers to use Bayesian updating with other task-related
 fMRI studies.
 \end{abstract}
 
+
 \section{Introduction}\label{introduction}
 
-Since the emergence of functional magnetic resonance imaging (fMRI),
-these techniques have provided unprecedented opportunities to study
-functional brain development during childhood and adolescence by
-scanning children from the age of four years onward. There is great
-progression in the assessment of neural functional growth using
-cross-sectional and longitudinal assessments of cognitive, social and
-affective processes across the full range of childhood to adulthood.
-Despite the advancements in the ability to study the developing brain in
-vivo using fMRI, recent years have seen an increased concern about the
+Since its emergence, functional magnetic resonance imaging (fMRI) has
+provided unprecedented opportunities to study functional brain
+development during childhood and adolescence by scanning children from
+the age of four years onward. There is great progression in the
+assessment of neural functional growth using cross-sectional and
+longitudinal assessments of cognitive, social and affective processes
+across the full range of childhood to adulthood. Despite the
+advancements in the ability to study the developing brain in vivo using
+fMRI, recent years have seen an increased concern about the
 replicability of scientific findings in general and particularly in
 psychology and cognitive neuroscience (Bishop 2019; E. T. Klapwijk et
 al. 2021; Munafò et al. 2017; Poldrack et al. 2017; see Marek et al.
@@ -255,7 +311,8 @@ hardly be overstated, given that they provide an important open research
 tool for researchers across the globe.
 
 However, most fMRI studies are carried out by individual research groups
-in much smaller samples, which have more opportunities to pursue new
+in much smaller samples. These labs have the important advantage over
+large scale cohort studies of having opportunities to pursue new
 scientific questions, for example using novel paradigms. It is also
 vital that the findings of such studies are replicable and meaningful,
 meaning that these studies should be properly powered, also without
@@ -266,43 +323,44 @@ literature of the research area at hand. But these effect sizes are
 often inflated due to publication bias (Gelman and Carlin 2014;
 Ioannidis 2005; Open Science Collaboration 2015; Wicherts et al. 2016;
 Yarkoni 2009). Therefore, calculating power based on published effect
-sizes usually underestimates the sample size needed to reliably detect
-an effect.
+sizes usually underestimates the sample size needed to re
 
 This paper will present a novel method to determine the required sample
 size for fMRI studies based on existing (i.e., already collected) data
-using Bayesian updating (Rouder 2014). Specifically, the approach will
-determine the proportion of the already collected data that is needed to
-get a desired credible interval (the Bayesian counterpart of the
-confidence interval). This will provide an estimate of the percentage of
-cases for which the credible interval is expected to be in the desired
-range (e.g., the interval should \emph{not} contain the value 0 for the
-parameter of interest). This in turn gives us an estimate of the sample
-size needed for a certain level of power. The current paper will provide
-examples (including an R package) for two effect sizes: Cohen's d and
-Pearson's correlation. The sample size determined using existing data is
-valuable when designing a new research project and when justifying
-sample sizes in a pre-registration or in proposals send to a (medical)
-ethical committee.
+using Bayesian updating (Rouder 2014). For novel paradigms with no
+existing data available, the method can also be used to monitor sample
+size requirements during data collection. Specifically, the approach
+will determine the proportion of the already collected data that is
+needed to get a desired credible interval (the Bayesian counterpart of
+the confidence interval). This will provide an estimate of the
+percentage of cases for which the credible interval is expected to be in
+the desired range (e.g., the interval should \emph{not} contain the
+value 0 for the parameter of interest). This in turn gives us an
+estimate of the sample size needed for a certain level of power. The
+current paper will provide examples (including an R package) for two
+effect sizes: Cohen's d and Pearson's correlation. The sample size
+determined using existing data is valuable when designing a new research
+project and when justifying sample sizes in a pre-registration or in
+proposals sent to a (medical) ethical committee.
 
 We will illustrate sample size determination using existing data sets
 and tasks that are currently widely used in the developmental fMRI
 literature, specifically cognitive control, reward activity, and
 social-cognitive processing (see Table~\ref{tbl-1} for an overview)
 based on existing data from our own lab. It will be determined how large
-the sample size should be to detect Cohen's d, such that 95\% does not
-contain the value zero for a specific condition effect (e.g., brain
-activity during feedback processing versus rule application). Most prior
-developmental fMRI studies addressed the question whether an effect
-linearly increases or decreases with age (Crone and Steinbeis 2017). We
-therefore also determine the sample size needed to detect a Pearson
-correlation of an effect with linear age that is larger than zero. In
-the next sections, we will first introduce Bayesian updating, the
-highest density credible interval, and sample size determination. Next,
-we will provide examples using existing data from four fMRI studies
-(Braams et al. 2014; Peters and Crone 2017; Spaans et al. 2023; Cruijsen
-et al. 2023), and illustrate sample size determination using these
-examples.
+the sample size should be to detect anon-zero Cohen's d value, such that
+95\% does not contain the value zero for a specific condition effect
+(e.g., brain activity during feedback processing versus rule
+application). Most prior developmental fMRI studies addressed the
+question whether an effect linearly increases or decreases with age
+(Crone and Steinbeis 2017). We therefore also determine the sample size
+needed to detect a Pearson correlation of an effect with linear age that
+is larger than zero. In the next sections, we will first introduce
+Bayesian updating, the highest density credible interval, and sample
+size determination. Next, we will provide examples using existing data
+from four fMRI studies (Braams et al. 2014; Peters and Crone 2017;
+Spaans et al. 2023; Cruijsen et al. 2023), and illustrate sample size
+determination using these examples.
 
 \subsection{Bayesian updating}\label{bayesian-updating}
 
@@ -396,17 +454,17 @@ arbitrary order of the participant in a data set, this is done for a set
 number of permutations, e.g., 1000, of the participants in the data set.
 For each sample size, we then calculate the average HDCI of all
 permutations. Considering both the average HDCI and the HDCI's resulting
-from the different permutations, will provide an estimate sample size
-needed to obtain a 95\% HDCI . The 95\% HDCI for Cohen's d was
-established through non-parametric bootstrapping (Efron and Tibshirani
-1994). Specifically, we resampled the current subset of data 100 times
-and calculated Cohen's d for the difference between variable x and
-variable y each time. We then calculated the mean and standard
-deviations of Cohen's d across the 100 resampled values. The 95\% CI was
-determined by subtracting 1.96 times the standard deviation of the
-Cohen's d values from the mean Cohen's d value, and by adding 1.96 times
-the standard deviation of the Cohen's d values to the mean Cohen's d
-value.
+from the different permutations, will provide an estimate of the sample
+size needed to obtain a 95\% HDCI that excludes zero. The 95\% HDCI for
+Cohen's d was established through non-parametric bootstrapping (Efron
+and Tibshirani 1994). Specifically, we resampled the current subset of
+data 100 times and calculated Cohen's d for the difference between
+variable x and variable y each time. We then calculated the mean and
+standard deviations of Cohen's d across the 100 resampled values. The
+95\% CI was determined by subtracting 1.96 times the standard deviation
+of the Cohen's d values from the mean Cohen's d value, and by adding
+1.96 times the standard deviation of the Cohen's d values to the mean
+Cohen's d value.
 
 To illustrate the current method, we can take a preview at
 Figure~\ref{fig-1-total} C in the Results section. The dataset used to
@@ -427,9 +485,9 @@ average interval does not contain the value zero, we can learn from the
 permutations that when using 20 participants it is still rather likely
 that the resulting interval will include the value zero. This becomes
 much less likely for the samples of 46 and 72 participants. With these
-sample sizes neither the HDCIs nor the average interval contain the
-value zero (see Figure~\ref{fig-1-total} C). Additionally, the
-probability that an interval does not contain the value zero equals
+sample sizes neither the individual HDCIs nor the average interval
+contain the value zero (see Figure~\ref{fig-1-total} C). Additionally,
+the probability that an interval does not contain the value zero equals
 100\% for 72 participants (see Figure~\ref{fig-2-total} C). Therefore, a
 sample size of 72 and higher will usually render intervals that do not
 contain the value zero.
@@ -440,13 +498,23 @@ likely differ from the effect size in the population that will be
 addressed in the study being designed. However, sample size
 determination does not suffer from the fact that effect sizes reported
 in the literature tend to be inflated (like power analysis) because
-effect sizes are straightforwardly computed from actual data. The
-determined sample size is therefore an estimate of the required sample
-size. This estimate is valuable because it allows researchers to plan
-their research project, can be reported in their research proposal or
-pre-registration, and it may lead to the conclusion that the sample size
-needed cannot be achieved with the resources that you have at your
-disposal.
+effect sizes are straightforwardly computed from actual data. This also
+means that compared to power analyses, fewer assumptions about the data
+to be collected are needed. On the other hand, just like traditional
+power analyses, it is important to consider to what extent the existing
+data resemble the to be planned study. The determined sample size is
+therefore an estimate of the required sample size. This estimate is
+valuable because it allows researchers to plan their research project,
+can be reported in their research proposal or pre-registration, and it
+may lead to the conclusion that the sample size needed cannot be
+achieved with the resources that you have at your disposal. After
+planning, in the data collection phase, one can also estimate the HDCI
+at regular intervals with incoming data. Based on the outcome,
+additional data can be collected if needed or the researcher can decide
+that the precision of the HDCI is sufficient, and no more data
+collection is required. This will be especially useful in cases where
+resources are scarce, such as smaller studies conducted by individual
+research labs, or to limit participant burden.
 
 In the next section Bayesian empirical sample size determination will be
 exemplified and discussed using different fMRI tasks from the BrainTime
@@ -459,19 +527,28 @@ package}{neuroUp R package}}\label{neuroup-r-package}
 The code for Bayesian updating in this manuscript is implemented in the
 R language for statistical computing (R Core Team 2023). We currently
 provide the \emph{neuroUp} package at the following location:
-\url{https://github.com/eduardklap/neuroUp} (E. Klapwijk, Hoijtink, and
-Jongerling 2024). This package is built on several packages from the
-tidyverse (Wickham et al. 2019), most notably \emph{ggplot2}. The
-package can be installed using the R commands:
-\texttt{library(devtools)} and
-\texttt{install\_github("eduardklap/neuroUp")}. All data used in the
-current manuscript is also available within the \emph{neuroUp} package,
-in this way all figures in the manuscript can be reproduced using the R
-package. For a more elaborate introduction to \emph{neuroUp} and its
-functions, please refer to
-\url{https://eduardklap.github.io/neuroUp/articles/neuroUp.html}. To
+\url{https://github.com/eduardklap/neuroUp} and via the Comprehensive R
+Archive Network (CRAN):
+\url{https://doi.org/10.32614/CRAN.package.neuroUp} (E. Klapwijk,
+Hoijtink, and Jongerling 2024). This package is built on several
+packages from the tidyverse (Wickham et al. 2019), most notably
+\emph{ggplot2}. The package can be installed using the R command:
+\texttt{install.packages("neuroUp")}. All data used in the current
+manuscript are also available within the \emph{neuroUp} package, in this
+way all figures in the manuscript can be reproduced using the R package.
+See Box 1 for a description of the usage of the package, and for a more
+elaborate introduction to \emph{neuroUp} and its functions, please refer
+to \url{https://eduardklap.github.io/neuroUp/articles/neuroUp.html}. To
 cite package neuroUp in publications use E. Klapwijk, Hoijtink, and
 Jongerling (2024).
+
+A reproducible version of this manuscript including associated code
+notebooks is available here:
+\url{https://eduardklap.github.io/sample-size-fmri/.} The code notebooks
+are also presented as supplementary data for this article. A CODECHECK
+(Nüst and Eglen 2021) certificate is available confirming that the
+computations underlying this article could be independently executed:
+\url{https://doi.org/10.5281/zenodo.13945051} (Röseler 2024).
 
 \section{Method \& Materials}\label{method-materials}
 
@@ -482,13 +559,13 @@ summary statistics for individual participants for regions and task
 conditions of interest (see fMRI processing).
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1227}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.2454}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.2209}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0552}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0736}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1227}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1288}}@{}}
 \caption{Overview of tasks processed in the current
 study.}\label{tbl-1}\tabularnewline
 \toprule\noalign{}
@@ -586,7 +663,7 @@ and application phase (see Peters and Crone (2017) for details).
 \paragraph{Gambling task}\label{gambling-task}
 
 For the Gambling task (Braams et al. 2014), we used data from 221
-participant at time point 3 (we went for the largest sample size and
+participants at time point 3 (we went for the largest sample size and
 this was the time point with the most data available for the contrasts
 of interest). We use the same data and processing as reported in
 Schreuders et al. (2018). In the Gambling task, participants could
@@ -705,6 +782,62 @@ value for the mean activation during gaining for self and one value for
 the mean activation during no-gain for self and charity for all
 participants.
 
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 0\tabcolsep) * \real{1.0008}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Box 1: Data processing using \emph{neuroUp}} \\
+\begin{minipage}[t]{\linewidth}\raggedright
+The function \texttt{estim\_diff()} helps to determine the sample size
+required to estimate differences in raw means and Cohen's d's for
+multiple sample sizes with a certain precision. Using the \emph{neuroUp}
+package, we run the following code (with explanation below):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# set seed}
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{1234}\NormalTok{)}
+
+\CommentTok{\# Estimate differences (unstandardized and Cohen\textquotesingle{}s d)}
+\NormalTok{feedback\_fig }\OtherTok{\textless{}{-}} \FunctionTok{estim\_diff}\NormalTok{(}\AttributeTok{data =}\NormalTok{ feedback,}
+                           \AttributeTok{vars\_of\_interest =} \FunctionTok{c}\NormalTok{(}\StringTok{"mfg\_learning"}\NormalTok{,}
+                                                \StringTok{"mfg\_application"}\NormalTok{),}
+                           \AttributeTok{sample\_size =} \DecValTok{20}\SpecialCharTok{:}\DecValTok{271}\NormalTok{,}
+                           \AttributeTok{k =} \DecValTok{1000}\NormalTok{,}
+                           \AttributeTok{name =} \StringTok{"A. Feedback DLPFC"}\NormalTok{)}
+
+\CommentTok{\# plot figure 1a}
+\NormalTok{feedback\_fig}\SpecialCharTok{$}\NormalTok{fig\_cohens\_d}
+\end{Highlighting}
+\end{Shaded}
+
+The first step is to set a seed value to make sure we get the same
+results when re-running the function (\texttt{set.seed(1234)}). Next, we
+store the outcomes of the \texttt{estim\_diff()} function into a new
+object that we call \texttt{feedback\_fig}. For the feedback task, we
+provide the \texttt{feedback} data set that comes with the
+\emph{neuroUp} package as the data to be analyzed. As variables of
+interest (\texttt{vars\_of\_interest}) we provide a vector containing
+the names of the variables to be compared on their means (in our case,
+\texttt{c("mfg\_learning",\ "mfg\_application")}). Next,
+\texttt{sample\_size} is the range of sample size to be used
+(\texttt{20:271} in our example), and \texttt{k} is the number of
+permutations to be used for each sample size (\texttt{1000}) for the
+purpose of the current manuscript. Finally, \texttt{name} is an optional
+title of the dataset or variables to be displayed with the figures
+(\texttt{"Feedback\ DLPFC"} in our example). Once the estimations are
+ready (note: with 1000 permutations this may take more than 1 hour), in
+the final step the figure is plotted
+(\texttt{feedback\_fig\$fig\_cohens\_d}). Subsequently, we run the same
+\texttt{estim\_diff()} function for the Gambling, Self-Evaluations, and
+Vicarious Charity data sets that are internal to the \emph{neuroUp}
+package. See the Supplementary notebooks for the code to create all
+figures and results reported below.
+\end{minipage} \\
+\end{longtable}
+
 \section{Results}\label{results}
 
 \subsection{Task effects using Cohen's
@@ -770,104 +903,170 @@ interval does not contain the value zero almost reaches 100\%.
 Therefore, for this task and brain region, a sample size of 47 and
 higher will usually render intervals that do not contain the value zero.
 
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
+
+\phantomsection\label{cell-fig-1a}
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
+
+\phantomsection\label{cell-fig-2a}
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
+
+\phantomsection\label{cell-fig-1b}
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
+
+\phantomsection\label{cell-fig-2b}
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
+
+\phantomsection\label{cell-fig-1c}
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
+
+\phantomsection\label{cell-fig-2c}
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
+
+\phantomsection\label{cell-fig-1d}
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
+
+\phantomsection\label{cell-fig-2d}
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
+
+\phantomsection\label{cell-fig-legend}
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
+
+\phantomsection\label{cell-fig-1-total}
 \begin{figure}[H]
 
 \centering{
 
-\includegraphics{sample-size-fmri-paper_files/figure-latex/figures-cohens_d-fig-1-total-output-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{sample-size-fmri-paper_files/figure-pdf/fig-1-total-1.pdf}}
 
 }
 
 \caption{\label{fig-1-total}Estimates of task effects for five different
 sample sizes (starting with \(N=20\), then 1/5th parts of the total
 dataset). For each sample size 10 randomly chosen HDCI's out of the 1000
-HDCI's computed are displayed (in light blue, permutation numbers used
-are displayed to the right of each subfigure). The average estimate with
+HDCI's computed are displayed (in light blue). The average estimate with
 credible interval summarizing the 1000 HDCI's for each sample size are
 plotted in reddish purple. DLPFC = dorsolateral prefrontal cortex; mPFC
 = medial prefrontal cortex; NAcc = nucleus accumbens.}
 
 \end{figure}%
 
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
+
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
+
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}@{}}
 \caption{Mean estimates (with credible interval in brackets) of Cohen's
-d for five different sample sizes (starting with n=20, then 1/5th parts
-of the total dataset) of the 1000 HDCI's. DLPFC = dorsolateral
+d for five different sample sizes (starting with \(N = 20\), then 1/5th
+parts of the total dataset) of the 1000 HDCI's. DLPFC = dorsolateral
 prefrontal cortex; mPFC = medial prefrontal cortex; NAcc = nucleus
 accumbens.}\label{tbl-2}\tabularnewline
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{task}
+task
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{brain region}
+brain region
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{n = 20}
+\(n = 20\)
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{n = 2/5}
+\(n = 2/5\)
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{n = 3/5}
+\(n = 3/5\)
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{n = 4/5}
+\(n = 4/5\)
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{N = total}
+\(N = total\)
 \end{minipage} \\
 \midrule\noalign{}
 \endfirsthead
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{task}
+task
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{brain region}
+brain region
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{n = 20}
+\(n = 20\)
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{n = 2/5}
+\(n = 2/5\)
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{n = 3/5}
+\(n = 3/5\)
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{n = 4/5}
+\(n = 4/5\)
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{N = total}
+\(N = total\)
 \end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
 Feedback & DLPFC & \textbf{2.03} (1.29, 2.76) & \textbf{1.89} (1.54,
-2.25), n = 70 & \textbf{1.88} (1.62, 2.15), n = 120 & \textbf{1.87}
-(1.65, 2.1), n = 170 & \textbf{1.87} (1.69, 2.04), \emph{N} = 271 \\
+2.25), \emph{n} = 70 & \textbf{1.88} (1.62, 2.15), \emph{n} = 120 &
+\textbf{1.87} (1.65, 2.1), \emph{n} = 170 & \textbf{1.87} (1.69, 2.04),
+\emph{N} = 271 \\
 Gambling & NAcc & \textbf{0.8} (0.25, 1.34) & \textbf{0.74} (0.45,
-1.03), n = 60 & \textbf{0.73} (0.51, 0.96), n = 100 & \textbf{0.73}
-(0.54, 0.92), n = 140 & \textbf{0.73} (0.58, 0.88), \emph{N} = 221 \\
+1.03), \emph{n} = 60 & \textbf{0.73} (0.51, 0.96), \emph{n} = 100 &
+\textbf{0.73} (0.54, 0.92), \emph{n} = 140 & \textbf{0.73} (0.58, 0.88),
+\emph{N} = 221 \\
 Self-evaluations & mPFC & \textbf{0.5} (0.02, 0.98) & \textbf{0.47}
-(0.17, 0.77), n = 46 & \textbf{0.46} (0.22, 0.7), n = 72 & \textbf{0.46}
-(0.26, 0.66), n = 98 & \textbf{0.46} (0.29, 0.62), n = 149 \\
+(0.17, 0.77), \emph{n} = 46 & \textbf{0.46} (0.22, 0.7), \emph{n} = 72 &
+\textbf{0.46} (0.26, 0.66), \emph{n} = 98 & \textbf{0.46} (0.29, 0.62),
+\emph{N} = 149 \\
 Gaining self & NAcc & \textbf{0.64} (0.14, 1.14) & \textbf{0.59} (0.27,
-0.91), n = 47 & \textbf{0.58} (0.32, 0.84), n = 74 & \textbf{0.58}
-(0.36, 0.8), n = 101 & \textbf{0.57} (0.39, 0.75), \emph{N} = 156 \\
+0.91), \emph{n} = 47 & \textbf{0.58} (0.32, 0.84), \emph{n} = 74 &
+\textbf{0.58} (0.36, 0.8), \emph{n} = 101 & \textbf{0.57} (0.39, 0.75),
+\emph{N} = 156 \\
 \end{longtable}
 
+\phantomsection\label{cell-fig-2-total}
 \begin{figure}[H]
 
 \centering{
 
-\includegraphics{sample-size-fmri-paper_files/figure-latex/figures-cohens_d-fig-2-total-output-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{sample-size-fmri-paper_files/figure-pdf/fig-2-total-1.pdf}}
 
 }
 
 \caption{\label{fig-2-total}For each task, for five different sample
-sizes (starting with \(n=20\), then 1/5th parts of the total dataset),
+sizes (starting with \(N = 20\), then 1/5th parts of the total dataset),
 the proportion of intervals not containing the value 0 is plotted in
 reddish purple.}
 
 \end{figure}%
+
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
 
 \subsection{Pearson correlations between task effects and
 age}\label{pearson-correlations-between-task-effects-and-age}
@@ -927,17 +1126,63 @@ average Pearson correlation is also relatively small with a value around
 relevant, the conclusion might be that one could strive for a sample
 larger than 160.
 
+\phantomsection\label{cell-fig-3a}
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
+
+\phantomsection\label{cell-fig-4a}
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
+
+\phantomsection\label{cell-fig-3b}
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
+
+\phantomsection\label{cell-fig-4b}
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
+
+\phantomsection\label{cell-fig-3c}
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
+
+\phantomsection\label{cell-fig-4c}
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
+
+\phantomsection\label{cell-fig-3d}
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
+
+\phantomsection\label{cell-fig-4d}
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
+
+\phantomsection\label{cell-fig-legend-corr}
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
+
+\phantomsection\label{cell-fig-3-total}
 \begin{figure}[H]
 
 \centering{
 
-\includegraphics{sample-size-fmri-paper_files/figure-latex/figures-correlations-fig-3-total-output-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{sample-size-fmri-paper_files/figure-pdf/fig-3-total-1.pdf}}
 
 }
 
 \caption{\label{fig-3-total}Estimates of Pearson's correlation between
 age and the task effect for five different sample sizes (starting with
-\(N=20\), then 1/5th parts of the total dataset). For each sample size
+\(N = 20\), then 1/5th parts of the total dataset). For each sample size
 10 randomly chosen HDCI's out of the 1000 HDCI's computed are displayed
 (in green, permutation numbers used are displayed to the right of each
 subfigure). The average estimate with credible interval summarizing the
@@ -947,19 +1192,27 @@ nucleus accumbens. Age is modeled as linearly increasing or decreasing.}
 
 \end{figure}%
 
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
+
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
+
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}@{}}
 \caption{Mean estimates (with credible interval in brackets) of
 Pearson's correlation between age and the task effect for five different
-sample sizes (starting with N=20, then 1/5th parts of the total dataset)
-of the 1000 HDCI's. DLPFC = dorsolateral prefrontal cortex; mPFC =
-medial prefrontal cortex; NAcc = nucleus
+sample sizes (starting with \(N = 20\), then 1/5th parts of the total
+dataset) of the 1000 HDCI's. DLPFC = dorsolateral prefrontal cortex;
+mPFC = medial prefrontal cortex; NAcc = nucleus
 accumbens.}\label{tbl-3}\tabularnewline
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
@@ -967,15 +1220,15 @@ task
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
 brain region
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-n = 20
+\(n = 20\)
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-n = 2/5
+\(n = 2/5\)
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-n = 3/5
+\(n = 3/5\)
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-n = 4/5
+\(n = 4/5\)
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-N = total
+\(N = total\)
 \end{minipage} \\
 \midrule\noalign{}
 \endfirsthead
@@ -985,52 +1238,57 @@ task
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
 brain region
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-n = 20
+\(n = 20\)
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-n = 2/5
+\(n = 2/5\)
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-n = 3/5
+\(n = 3/5\)
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-n = 4/5
+\(n = 4/5\)
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-N = total
+\(N = total\)
 \end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Feedback & DLPFC & \textbf{0.38} (-0.06, 0.69 ) & \textbf{0.38} (0.16,
-0.56 ), \emph{N} = 70 & \textbf{0.37} (0.21, 0.52 ), \emph{N} = 120 &
-\textbf{0.38} (0.24, 0.5 ), \emph{N} = 170 & \textbf{0.38} (0.27, 0.47
-), \emph{N} = 271 \\
-Gambling & NAcc & \textbf{-0.02} (-0.44, 0.4 ) & \textbf{-0.04} (-0.29,
-0.21 ), \emph{N} = 60 & \textbf{-0.04} (-0.23, 0.16 ), \emph{N} = 100 &
-\textbf{-0.04} (-0.2, 0.13 ), \emph{N} = 140 & \textbf{-0.04} (-0.17,
-0.09 ), \emph{N} = 221 \\
-Self-evaluations & mPFC & \textbf{0.07} (-0.36, 0.48 ) & \textbf{0.06}
-(-0.23, 0.34 ), \emph{N} = 46 & \textbf{0.06} (-0.17, 0.29 ), \emph{N} =
-72 & \textbf{0.06} (-0.14, 0.25 ), \emph{N} = 98 & \textbf{0.06} (-0.1,
-0.22 ), \emph{N} = 149 \\
-Gaining self & NAcc & \textbf{-0.18} (-0.56, 0.26 ) & \textbf{-0.17}
-(-0.44, 0.11 ), \emph{N} = 47 & \textbf{-0.17} (-0.38, 0.06 ), \emph{N}
-= 74 & \textbf{-0.17} (-0.35, 0.03 ), \emph{N} = 101 & \textbf{-0.17}
-(-0.31, -0.01 ), \emph{N} = 156 \\
+Feedback & DLPFC & \textbf{0.38} (-0.06, 0.69) & \textbf{0.38} (0.16,
+0.56), \emph{n =} 70 & \textbf{0.37} (0.21, 0.52), \emph{n =} 120 &
+\textbf{0.38} (0.24, 0.5), \emph{n =} 170 & \textbf{0.38} (0.27, 0.47),
+\emph{N} = 271 \\
+Gambling & NAcc & \textbf{-0.02} (-0.44, 0.4) & \textbf{-0.04} (-0.29,
+0.21), \emph{n =} 60 & \textbf{-0.04} (-0.23, 0.16), \emph{n =} 100 &
+\textbf{-0.04} (-0.2, 0.13), \emph{n =} 140 & \textbf{-0.04} (-0.17,
+0.09), \emph{N =} 221 \\
+Self-evaluations & mPFC & \textbf{0.07} (-0.36, 0.48) & \textbf{0.06}
+(-0.23, 0.34), \emph{n =} 46 & \textbf{0.06} (-0.17, 0.29), \emph{n =}
+72 & \textbf{0.06} (-0.14, 0.25), \emph{n =} 98 & \textbf{0.06} (-0.1,
+0.22), \emph{N} = 149 \\
+Gaining self & NAcc & \textbf{-0.18} (-0.56, 0.26) & \textbf{-0.17}
+(-0.44, 0.11), \emph{n =} 47 & \textbf{-0.17} (-0.38, 0.06), \emph{n =}
+74 & \textbf{-0.17} (-0.35, 0.03), \emph{n =} 101 & \textbf{-0.17}
+(-0.31, -0.01), \emph{N} = 156 \\
 \end{longtable}
 
+\phantomsection\label{cell-fig-4-total}
 \begin{figure}[H]
 
 \centering{
 
-\includegraphics{sample-size-fmri-paper_files/figure-latex/figures-correlations-fig-4-total-output-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{sample-size-fmri-paper_files/figure-pdf/fig-4-total-1.pdf}}
 
 }
 
 \caption{\label{fig-4-total}For each task, for five different sample
-sizes (starting with \(N=20\), then 1/5th parts of the total dataset),
+sizes (starting with \(N = 20\), then 1/5th parts of the total dataset),
 the proportion of intervals not containing the value 0 is plotted in
 orange. Age is modeled as linearly increasing or decreasing.}
 
 \end{figure}%
+
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
 
 \section{Discussion}\label{discussion}
 
@@ -1041,33 +1299,7 @@ fMRI studies where Cohen's d is the effect size of interest and four
 studies where a Pearson correlation for linear age is of interest.
 Additionally, it has been elaborated that Bayesian updating can be used
 to deal with the fact that the required sample size can only
-approximately be determined. Our results show that calculating and
-plotting HDCI's can be helpful in determining at what sample sizes task
-effects become more stable. We illustrated with four examples how
-researchers can get an indication of the required sample size if they
-plan to execute a study that uses feedback learning, reward-processing
-(two examples), or self-processing. For all effects under study, the
-width of the HDCI became smaller with larger sample sizes, showing that
-the precision of the estimation increased with more data. At what sample
-size estimations seemed to stabilize for general contrasts (e.g.,
-feedback processing versus rule application; reward versus loss)
-differed per task and region of interest. For example, the effects in
-the middle frontal gyrus during feedback processing were the strongest
-of the effects studied here. There, even for sample sizes of 20
-participants, task effects clearly differed from zero for the middle
-frontal gyrus. But even for such a strong effect, at higher sample sizes
-the results became more stable (i.e., less variability in subsamples of
-the total dataset). For the other three tasks, the HDCI's still
-contained the value zero with 20 participants but at higher sample sizes
-of 40-60 participants chances are very high that an effect larger than
-zero will be detected. In this paper we tested how existing data can be
-used to approximately determine the sample size that is required for a
-new study that is being planned. The approach presented has been
-illustrated using four existing fMRI studies where Cohen's d is the
-effect size of interest and four studies where a Pearson correlation for
-linear age is of interest. Additionally, it has been elaborated that
-Bayesian updating can be used to deal with the fact that the required
-sample size can only approximately be determined.
+approximately be determined.
 
 Our results show that calculating and plotting HDCI's can be helpful in
 determining at what sample sizes task effects become more stable. We
@@ -1123,9 +1355,17 @@ There are different ways in which the methods described here could be
 put to practice. When planning to use an existing task for follow-up or
 replication research, existing data can be used to provide an educated
 guess of the sample size that is needed in the new study (given that the
-new samples resemble the existing sample). In this way new task-related
-fMRI studies will likely be properly powered, even if these are
-small-scale studies from individual labs. Even in the current era of
+new samples resemble the existing sample). When doing so, it is
+important to keep in mind that there will always be differences in study
+execution that might influence the required sample size (e.g.,
+differences in task presentation, scan parameters, number of trials)
+(Bennett and Miller 2013; Chen et al. 2022). In those cases, it is up to
+the researcher to decide to what extent the existing studies resemble
+the study they are planning. This means that instead of providing a
+definitive answer about the number of participants needed, our approach
+serves as a tool that helps estimating the sample size. In this way new
+task-related fMRI studies will likely be properly powered, even if these
+are small-scale studies from individual labs. Even in the current era of
 large-scale consortium studies, there remains the need to conduct
 studies with more modest sample sizes. Such studies can help to balance
 between methodological robustness of well-established experiments and
@@ -1175,24 +1415,109 @@ research project. The following steps can be used:
   \end{enumerate}
 \end{enumerate}
 
-In this paper the focus was on Cohen's d and the Pearson correlation,
-however, the approach presented can straightforwardly be generalized to
-other statistical models and effect size measures. A relatively simple
-example is quadratic regression with either Spearman's correlation or
-the multiple correlation as the effect size measure, but generalizations
-to more involved statistical models are conceivable. Arguably, in more
-complex statistical models our approach may succeed where classical
-power analysis may very well fail. The reason for the latter is that in
-power analysis ``the effect size'' has to be specified. In, for example,
-structural equation models, this implies that factor loadings,
-regression coefficients and (co)variances have to be specified. Doing
-this such that the specification represents a certain ``effect size'' is
-at least difficult and maybe even impossible. In our approach effect
-sizes do not have to be specified but are straightforwardly estimated
-using existing data. The latter is usually easy and straightforward.
-Therefore, in an era of open science in which data sets are increasingly
-available for re-use (also for sample size determination) there is a lot
-of potential for the approach presented in this paper.
+In this paper the focus was on Cohen's d and the Pearson correlation
+using cross-sectional data, however, the approach presented can
+straightforwardly be generalized to other statistical models and effect
+size measures. A relatively simple example is quadratic regression with
+either Spearman's correlation or the multiple correlation as the effect
+size measure, but generalizations to more complex statistical models
+such as multilevel models applied to longitudinal data are conceivable.
+One specifically interesting avenue would be a combination of Bayesian
+updating and power contours (Baker et al. 2021) to consider the combined
+effect of the number of participants tested and number of trials per
+participant (Chen et al. 2022). Arguably, in more complex statistical
+models our approach may succeed where classical power analysis may very
+well fail. The reason for the latter is that in power analysis ``the
+effect size'' has to be specified. In, for example, structural equation
+models, this implies that factor loadings, regression coefficients and
+(co)variances have to be specified. Doing this such that the
+specification represents a certain ``effect size'' is at least difficult
+and maybe even impossible. In our approach effect sizes do not have to
+be specified but are straightforwardly estimated using existing data.
+The latter is usually easy and straightforward. Therefore, in an era of
+open science in which data sets are increasingly available for re-use
+(also for sample size determination) there is much potential for the
+approach presented in this paper (see Box 2 for more example use cases).
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 0\tabcolsep) * \real{1.0012}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Box 2: Use cases
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Example case 1: reward learning task main effect}
+
+In this box, we illustrate the use of this method in a data set that is
+not from our own lab as an additional use case. We provide an example of
+a researcher who is planning a new study in which the researcher is
+interested in the main effect of reward versus no-reward conditions in
+the caudate nucleus during a reward learning task. For this example, we
+used existing data from Calabro et al. (2023) for 232 participants in
+total (including additional developmental data), with permission from
+the authors. In the first step we run the estimations, which suggest
+that we should aim for a sample size of at least 104 participants,
+because in this case all estimations are above zero. As can be seen in
+the figures below, estimations become more robust at \(n=146\) and
+\(n=232\) but the advantage of more data above \(n = 146\) is relatively
+small. \\
+\end{longtable}
+
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
+
+\pandocbounded{\includegraphics[keepaspectratio]{sample-size-fmri-paper_files/figure-pdf/fig1-box-1.pdf}}
+
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 0\tabcolsep) * \real{1.0011}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+In the following step, the researcher starts the new study with the
+sample size determined using existing data with a comparable paradigm.
+This means the researcher can administer a (new) reward learning task in
+a sample of 104 participants.
+
+The researcher computes the HDCI's for the new data. In case most of the
+permutations do not contain the value zero, data collection can be
+finished. However, it is also possible to collect additional data in
+case the new results are less robust; in this case the HDCI's can be
+computed again with more data. Taken together, the method presented here
+provides a valid estimate of the required sample size for starting a new
+study.
+
+\textbf{Example case 2: reward learning task age effect}
+
+In case a researcher is interested in correlations with age or other
+predictor variables (e.g.~IQ or SES), the procedure should be performed
+again with the predictor variable included. Using the data from Calabro
+et al. (2023), we provide an example of a researcher who is planning a
+new study in which they are interested in the relationship between age
+and the parametric association between caudate nucleus activation and
+reward prediction error (for which we have one value per participant).
+In the first step we run the estimations, which suggest that in case we
+are interested in linear age effects, we should aim for a sample size of
+at least 146 participants. As can be seen in the Figures below, at
+\(n = 146\) the HDCI's contain zero for a large proportion of the
+permutations. This suggests that for more robust correlational effects,
+it is therefore recommended to include at least 146 participants in a
+new study. \\
+\end{longtable}
+
+\pandocbounded{\includegraphics[keepaspectratio]{sample-size-fmri-paper_files/figure-pdf/fig2-box-1.pdf}}
+
+\textsubscript{Source:
+\href{https://eduardklap.github.io/sample-size-fmri/sample-size-fmri-paper.qmd.html}{Article
+Notebook}}
 
 \subsubsection{Practical
 recommendations}\label{practical-recommendations}
@@ -1202,40 +1527,69 @@ the determined sample size is only an indication of the sample size
 required for the new study. In the new study the unknown effect size
 (Cohen's d or Pearson's correlation) may be smaller or larger than in
 the existing study and therefore a somewhat smaller or larger sample
-size may be required. As elaborated earlier, this can be accommodated
-using Bayesian updating using the determined sample size as the point of
-departure. It is also important to consider how one can determine the
-resemblance of a ``to be planned study'' to the existing study. Although
-this is a subjective evaluation, it is probably wise to be mindful of
-different factors that can influence the strength of the effect, such as
-task domain, number of trials, region of interest, and modality (e.g.,
-visual versus verbal) (Bennett and Miller 2013; Elliott et al. 2020;
-Herting et al. 2018). This is also important for cases where the
-ultimate consequence of the sample size estimation might be that one
-should not execute the planned study. For example, if a study resembles
-study B in Figure 3, it is to be expected that the effect size for
-linear correlations with age (if one expects a linear and not a
-non-linear effect) is so small that either it is irrelevant, or
-unrealistic large sample sizes are required to obtain an average HDCI
-that does not contain zero. But even in this situation, it depends on
-the context whether something is a meaningful small effect or a
-negligible small effect (see for further discussions Dick et al. (2021)
-and Funder and Ozer (2019)). One might still decide to continue the
-study when there is evidence that the effect at hand is meaningful
-because cumulatively it can lead to larger effects. If the effect is yet
-deemed irrelevant, one could choose not to collect new data, or one
-could alternatively take a bet to pilot a novel version of a similar
-task might lead to a stronger effect. Bayesian updating can then be used
-to estimate the HDCI's again after a small number of participants. If
-the average effect is still close to zero it is probably better to abort
-the study.
+size may be required. This can be accommodated using Bayesian updating
+in the data collection phase with the determined sample size as the
+point of departure. The HDCI can be estimated at regular intervals with
+incoming data, which can help to determine whether additional data are
+needed or not. It is also important to consider how one can determine
+the resemblance of a ``to be planned study'' to the existing study.
+Although this is a subjective evaluation, it is probably wise to be
+mindful of different factors that can influence the strength of the
+effect, such as task domain, number of trials, scan parameters, region
+of interest, and modality (e.g., visual versus verbal) (Bennett and
+Miller 2013; Elliott et al. 2020; Herting et al. 2018). In case of
+correlational studies, the range of the independent variable such as age
+should also be considered. One can undersample from the existing data at
+hand, in case the age range of interest of the planned study falls
+within that range. But when the age range of interest is wider than the
+range of the data at hand, extrapolation of the estimates to the new
+sample should be done with caution.\\
+
+Carefully considering the differences in study design between existing
+and planned studies is also important for cases where the ultimate
+consequence of the sample size estimation might be that one should not
+execute the planned study. For example, if a study resembles study B in
+Figure 3, it is to be expected that the effect size for linear
+correlations with age (if one expects a linear and not a non-linear
+effect) is so small that either it is irrelevant, or unrealistic large
+sample sizes are required to obtain an average HDCI that does not
+contain zero. But even in this situation, it depends on the context
+whether something is a meaningful small effect or a negligible small
+effect (see for further discussions Dick et al. (2021) and Funder and
+Ozer (2019)). One might still decide to continue the study when there is
+evidence that the small effect at hand is meaningful, for example
+because cumulatively it can lead to larger effects in the longer run. If
+the effect is yet deemed irrelevant, one could choose not to collect new
+data, or one could alternatively take a bet to pilot a novel version of
+a similar task that might lead to a stronger effect. Bayesian updating
+can then be used to estimate the HDCI's again after a small number of
+participants. If the average effect is still close to zero one might
+conclude it is probably better to use a different paradigm or to focus
+on other aspects of the study.
+
+In conclusion, in this paper we demonstrate that the current HDCI
+approach may be a helpful tool in planning a study. The quantification
+of the required sample is most valid if the existing study
+characteristics and study samples are comparable to the planned study.
+Yet, in most cases (apart from direct replications), new research is
+carried out to discover something new by implementing a variation of a
+task in a new sample or setting. Our approach can then also be used to
+monitor the precision of the estimates and compare it with the existing
+data set (by plotting the estimates at certain predetermined sample size
+intervals). That is also another way in which the approach can be used
+for the interesting cases in which a totally new task is used. Together,
+we aimed to present a user-friendly open source tool to determine sample
+sizes based on existing data for paradigms that were validated in
+previous research, or in the process of data collection in case the
+study tests scientific questions using novel paradigms.
 
 \section{Acknowledgments}\label{acknowledgments}
 
 This study was funded by the NWO Spinoza prize awarded to Eveline A.
 Crone. The authors thank Sabine Peters, Lisa Schreuders, Jochem Spaans,
-and Renske van der Cruijsen for providing the ROI data files used in the
-paper.
+and Renske van der Cruijsen for providing the ROI data files for the
+BrainTime and Self-Concept studies used in the paper. We thank Finn
+Calabro and Bea Luna for providing the reward learning task data.
 
 \subsection*{References}\label{references}
 \addcontentsline{toc}{subsection}{References}
@@ -1247,6 +1601,13 @@ Achterberg, Michelle, and Mara van der Meulen. 2019. {``Genetic and
 Environmental Influences on MRI Scan Quantity and Quality.''}
 \emph{Developmental Cognitive Neuroscience} 38 (August): 100667.
 \url{https://doi.org/10.1016/j.dcn.2019.100667}.
+
+\bibitem[\citeproctext]{ref-baker2021}
+Baker, Daniel H., Greta Vilidaite, Freya A. Lygo, Anika K. Smith, Tessa
+R. Flack, André D. Gouws, and Timothy J. Andrews. 2021. {``Power
+Contours: Optimising Sample Size and Precision in Experimental
+Psychology and Human Neuroscience.''} \emph{Psychological Methods} 26
+(3): 295--314. \url{https://doi.org/10.1037/met0000337}.
 
 \bibitem[\citeproctext]{ref-bennett2013}
 Bennett, Craig M., and Michael B. Miller. 2013. {``fMRI Reliability:
@@ -1279,6 +1640,13 @@ Nosek, Jonathan Flint, Emma S. J. Robinson, and Marcus R. Munafò. 2013.
 Neuroscience.''} \emph{Nature Reviews Neuroscience} 14 (5): 365--76.
 \url{https://doi.org/10.1038/nrn3475}.
 
+\bibitem[\citeproctext]{ref-calabro2023}
+Calabro, Finnegan J, David F Montez, Bart Larsen, Charles M Laymon,
+William Foran, Michael N Hallquist, Julie C Price, and Beatriz Luna.
+2023. {``Striatal Dopamine Supports Reward Expectation and Learning: A
+Simultaneous PET/fMRI Study.''} \emph{NeuroImage} 267 (February):
+119831. \url{https://doi.org/10.1016/j.neuroimage.2022.119831}.
+
 \bibitem[\citeproctext]{ref-casey2018}
 Casey, B. J., Tariq Cannonier, May I. Conley, Alexandra O. Cohen, Deanna
 M. Barch, Mary M. Heitzeg, Mary E. Soules, et al. 2018. {``The
@@ -1287,6 +1655,13 @@ Across 21 Sites.''} \emph{Developmental Cognitive Neuroscience}, The
 adolescent brain cognitive development (ABCD) consortium: Rationale,
 aims, and assessment strategy, 32 (August): 43--54.
 \url{https://doi.org/10.1016/j.dcn.2018.03.001}.
+
+\bibitem[\citeproctext]{ref-chen2022}
+Chen, Gang, Daniel S. Pine, Melissa A. Brotman, Ashley R. Smith, Robert
+W. Cox, Paul A. Taylor, and Simone P. Haller. 2022. {``Hyperbolic
+Trade-Off: The Importance of Balancing Trial and Subject Sample Sizes in
+Neuroimaging.''} \emph{NeuroImage} 247 (February): 118786.
+\url{https://doi.org/10.1016/j.neuroimage.2021.118786}.
 
 \bibitem[\citeproctext]{ref-cohen1992}
 Cohen, Jacob. 1992. {``A Power Primer.''} \emph{Psychological Bulletin}
@@ -1415,6 +1790,12 @@ Nord, Camilla L., Vincent Valton, John Wood, and Jonathan P. Roiser.
 Mixture Modeling.''} \emph{Journal of Neuroscience} 37 (34): 8051--61.
 \url{https://doi.org/10.1523/JNEUROSCI.3592-16.2017}.
 
+\bibitem[\citeproctext]{ref-nuxfcst2021}
+Nüst, Daniel, and Stephen J. Eglen. 2021. {``CODECHECK: An Open Science
+Initiative for the Independent Execution of Computations Underlying
+Research Articles During Peer Review to Improve Reproducibility.''}
+\url{https://doi.org/10.12688/f1000research.51738.2}.
+
 \bibitem[\citeproctext]{ref-opensciencecollaboration2015}
 Open Science Collaboration. 2015. {``Estimating the Reproducibility of
 Psychological Science.''} \emph{Science} 349 (6251): aac4716.
@@ -1446,6 +1827,10 @@ R Core Team. 2023. \emph{R: A Language and Environment for Statistical
 Computing}. Vienna, Austria: R Foundation for Statistical Computing.
 \url{https://www.R-project.org/}.
 
+\bibitem[\citeproctext]{ref-ruxf6seler2024}
+Röseler, Lukas. 2024. {``CODECHECK Certificate 2024-005,''} October.
+\url{https://doi.org/10.5281/ZENODO.13945051}.
+
 \bibitem[\citeproctext]{ref-rouder2014}
 Rouder, Jeffrey N. 2014. {``Optional Stopping: No Problem for
 Bayesians.''} \emph{Psychonomic Bulletin \& Review} 21 (2): 301--8.
@@ -1465,11 +1850,12 @@ Schönbrodt, Felix D., and Marco Perugini. 2013. {``At What Sample Size
 Do Correlations Stabilize?''} \emph{Journal of Research in Personality}
 47 (5): 609--12. \url{https://doi.org/10.1016/j.jrp.2013.05.009}.
 
-\bibitem[\citeproctext]{ref-schreuders2018}
-Schreuders, E., E. T. Klapwijk, G. J. Will, and B. Guroglu. 2018.
-{``Friend Versus Foe: Neural Correlates of Prosocial Decisions for Liked
-and Disliked Peers.''} \emph{Cogn Affect Behav Neurosci}, January.
-\url{https://doi.org/10.3758/s13415-017-0557-1}.
+\bibitem[\citeproctext]{ref-schreuders2018a}
+Schreuders, Elisabeth, Barbara R. Braams, Neeltje E. Blankenstein, Jiska
+S. Peper, Berna Güroğlu, and Eveline A. Crone. 2018. {``Contributions of
+Reward Sensitivity to Ventral Striatum Activity Across Adolescence and
+Early Adulthood.''} \emph{Child Development} 89 (3): 797--810.
+\url{https://doi.org/10.1111/cdev.13056}.
 
 \bibitem[\citeproctext]{ref-schumann2010}
 Schumann, G., E. Loth, T. Banaschewski, A. Barbot, G. Barker, C. Büchel,
@@ -1526,6 +1912,7 @@ Et Al. (2009).''} \emph{Perspectives on Psychological Science} 4 (3):
 294--98. \url{https://doi.org/10.1111/j.1745-6924.2009.01127.x}.
 
 \end{CSLReferences}
+
 
 
 
